@@ -5,6 +5,10 @@
 
 有愿意加入项目的，请加QQ：309810957
 
+[oschina 极速下载地址](http://git.oschina.net/mirrors/asofdate-etl)
+
+[github 托管地址](https://github.com/hzwy23/asofdate-etl)
+
 
 **在下Java水平有限,项目中出现错误和不规范的地方,请不吝赐教,感激不尽**
 
