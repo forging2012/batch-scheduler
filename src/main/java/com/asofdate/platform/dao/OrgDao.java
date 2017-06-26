@@ -1,6 +1,6 @@
 package com.asofdate.platform.dao;
 
-import com.asofdate.platform.model.OrgModel;
+import com.asofdate.platform.entity.OrgEntity;
 import org.json.JSONArray;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/18.
  */
 public interface OrgDao {
-    List<OrgModel> findAll(String domainId);
+    List<OrgEntity> findAll(String domainId);
 
-    List<OrgModel> findSub(String domainId, String orgId);
+    List<OrgEntity> findSub(String domainId, String orgId);
 
-    int add(OrgModel orgModel);
+    int add(OrgEntity orgEntity);
 
     int delete(JSONArray jsonArray);
 
-    int update(OrgModel orgModel);
+    int update(OrgEntity orgEntity);
 }

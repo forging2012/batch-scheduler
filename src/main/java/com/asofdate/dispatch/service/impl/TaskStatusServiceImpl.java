@@ -1,13 +1,13 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.BatchJobStatusDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.GroupTaskModel;
-import com.asofdate.dispatch.model.JobStatus;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.GroupTaskService;
 import com.asofdate.dispatch.service.TaskDependencyService;
 import com.asofdate.dispatch.service.TaskStatusService;
+import com.asofdate.dispatch.utils.JobStatus;
 import com.asofdate.utils.JoinCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -36,9 +36,9 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     private String domainId;
     private String batchId;
 
-    private List<BatchGroupModel> groupList;
+    private List<BatchGroupEntity> groupList;
     // 任务组中的任务
-    private List<GroupTaskModel> taskList;
+    private List<GroupTaskEntity> taskList;
     /*
     * 批次中任务状态管理
     * 外层Map是batch中group的嵌套
@@ -68,8 +68,8 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         /*
         * 初始化全部任务组
         * */
-        for (BatchGroupModel gl : this.groupList) {
-            for (GroupTaskModel tl : this.taskList) {
+        for (BatchGroupEntity gl : this.groupList) {
+            for (GroupTaskEntity tl : this.taskList) {
                 if (gl.getGroupId().equals(tl.getGroupId())) {
                     // 0 表示初始化
                     this.taskMap.put(JoinCode.join(gl.getUuid(), tl.getUuid()), JobStatus.Job_STATUS_INIT);
@@ -89,7 +89,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     * */
     @Override
     public boolean isGroupCompleted(String gid, String groupId) {
-        for (GroupTaskModel m : taskList) {
+        for (GroupTaskEntity m : taskList) {
             if (groupId.equals(m.getGroupId())) {
                 int statusCd = getTaskStatus(gid, m.getUuid());
                 if (statusCd == JobStatus.Job_STATUS_COMPLETED) {
@@ -176,8 +176,8 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     * */
     @Override
     public Map getRunnableTasks(String gid, String groupId) {
-        Map<String, GroupTaskModel> map = new HashMap<>();
-        for (GroupTaskModel m : taskList) {
+        Map<String, GroupTaskEntity> map = new HashMap<>();
+        for (GroupTaskEntity m : taskList) {
             if (!groupId.equals(m.getGroupId())) {
                 continue;
             }

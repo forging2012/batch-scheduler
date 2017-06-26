@@ -1,8 +1,8 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.TaskDependencyDao;
-import com.asofdate.dispatch.model.GroupTaskModel;
-import com.asofdate.dispatch.model.TaskDependencyModel;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
+import com.asofdate.dispatch.entity.TaskDependencyEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,15 +29,15 @@ public class TaskDependencyDaoImpl implements TaskDependencyDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<TaskDependencyModel> findAll(String domainId) {
-        RowMapper<TaskDependencyModel> rowMapper = new BeanPropertyRowMapper<TaskDependencyModel>(TaskDependencyModel.class);
-        List<TaskDependencyModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_113, rowMapper, domainId);
+    public List<TaskDependencyEntity> findAll(String domainId) {
+        RowMapper<TaskDependencyEntity> rowMapper = new BeanPropertyRowMapper<TaskDependencyEntity>(TaskDependencyEntity.class);
+        List<TaskDependencyEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_113, rowMapper, domainId);
         return list;
     }
 
     @Override
-    public List<TaskDependencyModel> findById(String domainId, String batchId) {
-        List<TaskDependencyModel> list = findAll(domainId);
+    public List<TaskDependencyEntity> findById(String domainId, String batchId) {
+        List<TaskDependencyEntity> list = findAll(domainId);
         for (int i = 0; i < list.size(); i++) {
             if (batchId.equals(list.get(i))) {
                 list.remove(i);
@@ -49,22 +49,22 @@ public class TaskDependencyDaoImpl implements TaskDependencyDao {
 
     @Transactional
     @Override
-    public List<GroupTaskModel> getTaskDependency(String id) {
-        RowMapper<GroupTaskModel> rowMapper = new BeanPropertyRowMapper<>(GroupTaskModel.class);
-        List<GroupTaskModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_134, rowMapper, id);
+    public List<GroupTaskEntity> getTaskDependency(String id) {
+        RowMapper<GroupTaskEntity> rowMapper = new BeanPropertyRowMapper<>(GroupTaskEntity.class);
+        List<GroupTaskEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_134, rowMapper, id);
         return list;
     }
 
     @Override
-    public List<GroupTaskModel> getGroupTasks(String groupId, String id) {
+    public List<GroupTaskEntity> getGroupTasks(String groupId, String id) {
         logger.info("groupId is :" + groupId);
-        RowMapper<GroupTaskModel> rowMapper = new BeanPropertyRowMapper<>(GroupTaskModel.class);
-        List<GroupTaskModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_150, rowMapper, groupId);
+        RowMapper<GroupTaskEntity> rowMapper = new BeanPropertyRowMapper<>(GroupTaskEntity.class);
+        List<GroupTaskEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_150, rowMapper, groupId);
         Set<String> set = getChildren(groupId, id);
-        List<GroupTaskModel> owner = getTaskDependency(id);
+        List<GroupTaskEntity> owner = getTaskDependency(id);
 
         // 获取已经存在的依赖任务
-        for (GroupTaskModel m : owner) {
+        for (GroupTaskEntity m : owner) {
             set.add(m.getUpId());
         }
 
@@ -99,15 +99,15 @@ public class TaskDependencyDaoImpl implements TaskDependencyDao {
 
     private Set<String> getChildren(String groupId, String id) {
         Set<String> set = new HashSet<>();
-        RowMapper<TaskDependencyModel> rowMapper = new BeanPropertyRowMapper<>(TaskDependencyModel.class);
-        List<TaskDependencyModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_075, rowMapper, groupId);
+        RowMapper<TaskDependencyEntity> rowMapper = new BeanPropertyRowMapper<>(TaskDependencyEntity.class);
+        List<TaskDependencyEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_075, rowMapper, groupId);
         children(list, id, set);
         set.add(id);
         return set;
     }
 
-    private void children(List<TaskDependencyModel> all, String id, Set<String> set) {
-        for (TaskDependencyModel m : all) {
+    private void children(List<TaskDependencyEntity> all, String id, Set<String> set) {
+        for (TaskDependencyEntity m : all) {
             String upId = m.getUpId();
             if (upId == null || set.contains(m.getId())) {
                 continue;

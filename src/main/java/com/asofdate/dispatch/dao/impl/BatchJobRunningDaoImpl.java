@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.BatchJobRunningDao;
-import com.asofdate.dispatch.model.BatchJobStatusModel;
+import com.asofdate.dispatch.entity.BatchJobStatusEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,14 +20,14 @@ public class BatchJobRunningDaoImpl implements BatchJobRunningDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<BatchJobStatusModel> findAll(String batchId, String gid) {
-        RowMapper<BatchJobStatusModel> rowMapper = new BeanPropertyRowMapper<>(BatchJobStatusModel.class);
+    public List<BatchJobStatusEntity> findAll(String batchId, String gid) {
+        RowMapper<BatchJobStatusEntity> rowMapper = new BeanPropertyRowMapper<>(BatchJobStatusEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_204, rowMapper, batchId, gid);
     }
 
     @Override
-    public BatchJobStatusModel getDetails(String batchId, String gid, String tid) {
-        RowMapper<BatchJobStatusModel> rowMapper = new BeanPropertyRowMapper<>(BatchJobStatusModel.class);
+    public BatchJobStatusEntity getDetails(String batchId, String gid, String tid) {
+        RowMapper<BatchJobStatusEntity> rowMapper = new BeanPropertyRowMapper<>(BatchJobStatusEntity.class);
         return jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_206, rowMapper, batchId, gid, tid);
     }
 }

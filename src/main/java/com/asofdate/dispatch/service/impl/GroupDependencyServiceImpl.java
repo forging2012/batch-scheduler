@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.GroupDependencyDao;
-import com.asofdate.dispatch.model.GroupDependencyModel;
+import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.dispatch.service.GroupDependencyService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ public class GroupDependencyServiceImpl implements GroupDependencyService {
     * key : 任务组
     * value: 所有依赖的任务组
     * */
-    private Map<String, Set<GroupDependencyModel>> groupMap;
+    private Map<String, Set<GroupDependencyEntity>> groupMap;
 
     @Override
-    public List<GroupDependencyModel> findById(String domainId, String batchId) {
+    public List<GroupDependencyEntity> findById(String domainId, String batchId) {
         return groupDependencyDao.findById(domainId, batchId);
     }
 
@@ -38,11 +38,11 @@ public class GroupDependencyServiceImpl implements GroupDependencyService {
         /*
         * 初始化批次中任务组的依赖HashMap
         * */
-        for (GroupDependencyModel m : findById(domainId, batchId)) {
+        for (GroupDependencyEntity m : findById(domainId, batchId)) {
             if (this.groupMap.containsKey(m.getId())) {
                 this.groupMap.get(m.getId()).add(m);
             } else {
-                Set<GroupDependencyModel> set = new HashSet<>();
+                Set<GroupDependencyEntity> set = new HashSet<>();
                 set.add(m);
                 this.groupMap.put(m.getId(), set);
             }
@@ -54,7 +54,7 @@ public class GroupDependencyServiceImpl implements GroupDependencyService {
     * @param String gid 表示任务组id
     * */
     @Override
-    public Set<GroupDependencyModel> getGroupDependency(String gid) {
+    public Set<GroupDependencyEntity> getGroupDependency(String gid) {
         return this.groupMap.get(gid);
     }
 

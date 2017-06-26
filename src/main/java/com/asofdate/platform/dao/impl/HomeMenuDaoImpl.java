@@ -1,9 +1,9 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.*;
-import com.asofdate.platform.model.HomeMenuModel;
-import com.asofdate.platform.model.ResourceModel;
-import com.asofdate.platform.model.ThemeResourceModel;
+import com.asofdate.platform.entity.HomeMenuEntity;
+import com.asofdate.platform.entity.ResourceEntity;
+import com.asofdate.platform.entity.ThemeResourceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -35,7 +35,7 @@ public class HomeMenuDaoImpl implements HomeMenuDao {
     }
 
     private List getSubResource(String resUpId) {
-        List<ResourceModel> list = resourceDao.findSubByUpId(resUpId);
+        List<ResourceEntity> list = resourceDao.findSubByUpId(resUpId);
         return list;
     }
 
@@ -47,11 +47,11 @@ public class HomeMenuDaoImpl implements HomeMenuDao {
     * 将菜单资源树转从List转换成Map类型
     * 方便后边的匹配操作
     * key : res_id
-    * value: ResourceModel
+    * value: ResourceEntity
     * */
-    private Map<String, ResourceModel> list2Map(List<ResourceModel> list, String typeId) {
-        Map<String, ResourceModel> map = new HashMap<String, ResourceModel>();
-        for (ResourceModel m : list) {
+    private Map<String, ResourceEntity> list2Map(List<ResourceEntity> list, String typeId) {
+        Map<String, ResourceEntity> map = new HashMap<String, ResourceEntity>();
+        for (ResourceEntity m : list) {
             if (m.getRes_type().equals(typeId)) {
                 map.put(m.getRes_id(), m);
             }
@@ -67,31 +67,31 @@ public class HomeMenuDaoImpl implements HomeMenuDao {
         String themeId = getThemeId(userId);
 
         //获取主题对应的资源信息
-        List<ThemeResourceModel> list = getThemeResource(themeId);
+        List<ThemeResourceEntity> list = getThemeResource(themeId);
 
         // 获取指定菜单的所以下级菜单信息
-        List<ResourceModel> resourceList = getSubResource(resId);
+        List<ResourceEntity> resourceList = getSubResource(resId);
 
         // 将指定资源的所有下级信息转换成Map
         // 方便后边匹配查询
-        Map<String, ResourceModel> resourceMap = list2Map(resourceList, typeId);
+        Map<String, ResourceEntity> resourceMap = list2Map(resourceList, typeId);
 
-        List<HomeMenuModel> rst = new ArrayList<HomeMenuModel>();
-        for (ThemeResourceModel m : list) {
+        List<HomeMenuEntity> rst = new ArrayList<HomeMenuEntity>();
+        for (ThemeResourceEntity m : list) {
             if (!set.contains(m.getRes_id())) {
                 continue;
             }
             if (resourceMap.containsKey(m.getRes_id())) {
-                HomeMenuModel homeMenuModel = new HomeMenuModel();
-                homeMenuModel.setGroup_id(m.getGroup_id());
-                homeMenuModel.setRes_bg_color(m.getRes_bg_color());
-                homeMenuModel.setRes_class(m.getRes_class());
-                homeMenuModel.setRes_id(m.getRes_id());
-                homeMenuModel.setRes_img(m.getRes_img().replaceFirst("^/static", ""));
-                homeMenuModel.setRes_name(resourceMap.get(m.getRes_id()).getRes_name());
-                homeMenuModel.setRes_open_type(m.getRes_type());
-                homeMenuModel.setRes_url(m.getRes_url().replaceFirst("^/views", ""));
-                rst.add(homeMenuModel);
+                HomeMenuEntity homeMenuEntity = new HomeMenuEntity();
+                homeMenuEntity.setGroup_id(m.getGroup_id());
+                homeMenuEntity.setRes_bg_color(m.getRes_bg_color());
+                homeMenuEntity.setRes_class(m.getRes_class());
+                homeMenuEntity.setRes_id(m.getRes_id());
+                homeMenuEntity.setRes_img(m.getRes_img().replaceFirst("^/static", ""));
+                homeMenuEntity.setRes_name(resourceMap.get(m.getRes_id()).getRes_name());
+                homeMenuEntity.setRes_open_type(m.getRes_type());
+                homeMenuEntity.setRes_url(m.getRes_url().replaceFirst("^/views", ""));
+                rst.add(homeMenuEntity);
             }
         }
         return rst;

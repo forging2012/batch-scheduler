@@ -2,8 +2,8 @@ package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.OrgDao;
 import com.asofdate.platform.dao.UserDao;
-import com.asofdate.platform.model.OrgModel;
-import com.asofdate.platform.model.UserModel;
+import com.asofdate.platform.entity.OrgEntity;
+import com.asofdate.platform.entity.UserEntity;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.CryptoAES;
 import org.json.JSONArray;
@@ -31,14 +31,14 @@ public class UserDaoImpl implements UserDao {
     private OrgDao orgDao;
 
     @Override
-    public List<UserModel> findAll(String domainid) {
-        RowMapper<UserModel> rowMapper = new BeanPropertyRowMapper<>(UserModel.class);
+    public List<UserEntity> findAll(String domainid) {
+        RowMapper<UserEntity> rowMapper = new BeanPropertyRowMapper<>(UserEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_017, rowMapper, domainid);
     }
 
     @Override
-    public List<UserModel> findAll(String domainId, String orgId, String statusCd) {
-        List<UserModel> list = findAll(domainId);
+    public List<UserEntity> findAll(String domainId, String orgId, String statusCd) {
+        List<UserEntity> list = findAll(domainId);
         if ("0".equals(statusCd) || "1".equals(statusCd)) {
             for (int i = 0; i < list.size(); i++) {
                 if (!statusCd.equals(list.get(i).getStatus_cd())) {
@@ -48,9 +48,9 @@ public class UserDaoImpl implements UserDao {
             }
         }
         if (orgId != null && !orgId.isEmpty()) {
-            List<OrgModel> orgList = orgDao.findSub(domainId, orgId);
+            List<OrgEntity> orgList = orgDao.findSub(domainId, orgId);
             Set<String> set = new HashSet<>();
-            for (OrgModel om : orgList) {
+            for (OrgEntity om : orgList) {
                 set.add(om.getOrg_id());
             }
             set.add(orgId);
@@ -66,18 +66,18 @@ public class UserDaoImpl implements UserDao {
 
     @Transactional
     @Override
-    public int add(UserModel userModel) {
+    public int add(UserEntity userEntity) {
         jdbcTemplate.update(SqlDefine.sys_rdbms_018,
-                userModel.getUser_id(),
-                userModel.getUser_name(),
-                userModel.getCreate_user(),
-                userModel.getUser_email(),
-                userModel.getUser_phone(),
-                userModel.getOrg_unit_id(),
-                userModel.getModify_user());
-        String password = CryptoAES.aesEncrypt(userModel.getUser_passwd());
+                userEntity.getUser_id(),
+                userEntity.getUser_name(),
+                userEntity.getCreate_user(),
+                userEntity.getUser_email(),
+                userEntity.getUser_phone(),
+                userEntity.getOrg_unit_id(),
+                userEntity.getModify_user());
+        String password = CryptoAES.aesEncrypt(userEntity.getUser_passwd());
         return jdbcTemplate.update(SqlDefine.sys_rdbms_019,
-                userModel.getUser_id(), password, 0);
+                userEntity.getUser_id(), password, 0);
     }
 
     @Transactional
@@ -93,14 +93,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public int update(UserModel userModel) {
+    public int update(UserEntity userEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_021,
-                userModel.getUser_name(),
-                userModel.getUser_phone(),
-                userModel.getUser_email(),
-                userModel.getModify_user(),
-                userModel.getOrg_unit_id(),
-                userModel.getUser_id());
+                userEntity.getUser_name(),
+                userEntity.getUser_phone(),
+                userEntity.getUser_email(),
+                userEntity.getModify_user(),
+                userEntity.getOrg_unit_id(),
+                userEntity.getUser_id());
     }
 
     @Override

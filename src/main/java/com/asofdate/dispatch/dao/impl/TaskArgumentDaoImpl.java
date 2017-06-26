@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.TaskArgumentDao;
-import com.asofdate.dispatch.model.TaskArgumentModel;
+import com.asofdate.dispatch.entity.TaskArgumentEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,7 +26,7 @@ public class TaskArgumentDaoImpl implements TaskArgumentDao {
 
     @Override
     public List findAll(String domainId) {
-        RowMapper<TaskArgumentModel> rowMapper = new BeanPropertyRowMapper<TaskArgumentModel>(TaskArgumentModel.class);
+        RowMapper<TaskArgumentEntity> rowMapper = new BeanPropertyRowMapper<TaskArgumentEntity>(TaskArgumentEntity.class);
         List list = jdbcTemplate.query(SqlDefine.sys_rdbms_110, rowMapper, domainId);
         return list;
     }

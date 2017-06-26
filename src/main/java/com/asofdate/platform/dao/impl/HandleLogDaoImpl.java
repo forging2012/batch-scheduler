@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.HandleLogDao;
-import com.asofdate.platform.model.HandleLogModel;
+import com.asofdate.platform.entity.HandleLogEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,14 +20,14 @@ public class HandleLogDaoImpl implements HandleLogDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<HandleLogModel> findAll(String domainId) {
-        RowMapper<HandleLogModel> rowMapper = new BeanPropertyRowMapper<>(HandleLogModel.class);
+    public List<HandleLogEntity> findAll(String domainId) {
+        RowMapper<HandleLogEntity> rowMapper = new BeanPropertyRowMapper<>(HandleLogEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_012, rowMapper, domainId);
     }
 
     @Override
-    public List<HandleLogModel> findAll(String domainId, Integer offset, Integer limit) {
-        RowMapper<HandleLogModel> rowMapper = new BeanPropertyRowMapper<>(HandleLogModel.class);
+    public List<HandleLogEntity> findAll(String domainId, Integer offset, Integer limit) {
+        RowMapper<HandleLogEntity> rowMapper = new BeanPropertyRowMapper<>(HandleLogEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_029, rowMapper, domainId, offset, limit);
     }
 

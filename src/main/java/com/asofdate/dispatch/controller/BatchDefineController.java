@@ -1,15 +1,18 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.BatchDefineModel;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.BatchStatus;
+import com.asofdate.dispatch.dto.BatchArgumentDTO;
+import com.asofdate.dispatch.entity.BatchDefineEntity;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.service.ArgumentService;
 import com.asofdate.dispatch.service.BatchDefineService;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.GroupDependencyService;
+import com.asofdate.dispatch.utils.BatchStatus;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -44,7 +47,7 @@ public class BatchDefineController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<BatchDefineModel> getAll(HttpServletRequest request) {
+    public List<BatchDefineEntity> getAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null) {
             JSONObject jsonObject = JwtService.getConnectUser(request);
@@ -57,12 +60,12 @@ public class BatchDefineController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        int size = batchDefineService.add(parse(request));
-        if (1 != size) {
+        RetMsg retMsg = batchDefineService.addBatch(parse(request));
+        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
             response.setStatus(421);
-            return Hret.error(421, "新增任务组信息失败,任务组编码重复", JSONObject.NULL);
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     /*
@@ -71,62 +74,73 @@ public class BatchDefineController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String delete(HttpServletResponse response, HttpServletRequest request) {
-        List<BatchDefineModel> args = new ArrayList<>();
+        List<BatchDefineEntity> args = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
+
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
             String batchId = jsonObject.getString("batch_id");
-
+            String domainId = jsonObject.getString("domain_id");
             if (BatchStatus.BATCH_STATUS_RUNNING == batchDefineService.getStatus(batchId)) {
                 response.setStatus(421);
-                return Hret.error(500, "批次正在运行中,无法被删除", JSONObject.NULL);
+                return Hret.error(500, "批次正在运行中,无法被删除", null);
             }
-            BatchDefineModel batchDefineModel = new BatchDefineModel();
-            batchDefineModel.setBatchId(batchId);
-            batchDefineModel.setDomainId(jsonObject.getString("domain_id"));
-            args.add(batchDefineModel);
+
+            BatchDefineEntity batchDefineEntity = new BatchDefineEntity();
+            batchDefineEntity.setBatchId(batchId);
+            batchDefineEntity.setDomainId(domainId);
+            args.add(batchDefineEntity);
         }
-        String msg = batchDefineService.delete(args);
-        if ("success".equals(msg)) {
-            return Hret.success(200, "success", JSONObject.NULL);
+
+        RetMsg msg = batchDefineService.deleteBatch(args);
+        if (SysStatus.SUCCESS_CODE == msg.getCode()) {
+            return Hret.success(msg);
         }
+
         response.setStatus(421);
-        return Hret.error(421, msg, JSONObject.stringToValue(msg));
+        return Hret.error(msg);
     }
 
-
-    /*
-    * 更新任务组
-    * */
+    /**
+     * 更新任务组
+     *
+     * @return 返回更新操作状态信息
+     */
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
     public String update(HttpServletResponse response, HttpServletRequest request) {
-        BatchDefineModel m = parse(request);
+        BatchDefineEntity m = parse(request);
         if (batchDefineService.getStatus(m.getBatchId()) == BatchStatus.BATCH_STATUS_RUNNING) {
             response.setStatus(421);
             return Hret.error(421, "批次正在运行中,无法编辑", JSONObject.NULL);
         }
-        if (1 != batchDefineService.update(m)) {
-            return Hret.error(500, "新增批次信息失败,批次编码重复", JSONObject.NULL);
+        RetMsg retMsg = batchDefineService.updateBatch(m);
+
+        if (retMsg.getCode() != SysStatus.SUCCESS_CODE) {
+            logger.info(retMsg.toString());
+            response.setStatus(422);
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/group", method = RequestMethod.GET)
     @ResponseBody
-    public List<BatchGroupModel> getGroup(HttpServletRequest request) {
+    public List<BatchGroupEntity> getGroup(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         return batchGroupService.getGroup(batchId);
     }
 
     @RequestMapping(value = "/stop", method = RequestMethod.POST)
     @ResponseBody
-    public String stop(HttpServletRequest request) {
+    public String stop(HttpServletResponse response, HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
-        if (1 != batchDefineService.setStatus(batchId, 4)) {
-            return Hret.error(421, "停止批次失败", JSONObject.NULL);
+        RetMsg retMsg = batchDefineService.setStatus(batchId, 4);
+        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
+            response.setStatus(422);
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "停止批次成功", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/group", method = RequestMethod.POST)
@@ -190,7 +204,7 @@ public class BatchDefineController {
 
     @RequestMapping(value = "/group/dependency/add", method = RequestMethod.GET)
     @ResponseBody
-    public List<BatchGroupModel> canAddDependency(HttpServletRequest request) {
+    public List<BatchGroupEntity> canAddDependency(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         String id = request.getParameter("id");
         return batchGroupService.getDependency(batchId, id);
@@ -223,9 +237,9 @@ public class BatchDefineController {
 
     @RequestMapping(value = "/argument", method = RequestMethod.GET)
     @ResponseBody
-    public String getBatchArg(HttpServletRequest request) {
+    public List<BatchArgumentDTO> getBatchArg(HttpServletRequest request) {
         String id = request.getParameter("batch_id");
-        return batchDefineService.getBatchArg(id).toString();
+        return batchDefineService.findBatchArgsById(id);
     }
 
     @RequestMapping(value = "/argument", method = RequestMethod.POST)
@@ -252,18 +266,18 @@ public class BatchDefineController {
         return Hret.success(200, "success", JSONObject.NULL);
     }
 
-    private BatchDefineModel parse(HttpServletRequest request) {
+    private BatchDefineEntity parse(HttpServletRequest request) {
         String userId = JwtService.getConnectUser(request).get("UserId").toString();
-        BatchDefineModel batchDefineModel = new BatchDefineModel();
+        BatchDefineEntity batchDefineEntity = new BatchDefineEntity();
         String batchId = JoinCode.join(request.getParameter("domain_id"), request.getParameter("batch_id"));
-        batchDefineModel.setBatchId(batchId);
-        batchDefineModel.setCodeNumber(request.getParameter("batch_id"));
-        batchDefineModel.setRetMsg("");
-        batchDefineModel.setCompleteDate(request.getParameter("complete_date"));
-        batchDefineModel.setDomainId(request.getParameter("domain_id"));
-        batchDefineModel.setBatchDesc(request.getParameter("batch_desc"));
-        batchDefineModel.setBatchStatus(request.getParameter("batch_status"));
-        batchDefineModel.setAsOfDate(request.getParameter("as_of_date"));
-        return batchDefineModel;
+        batchDefineEntity.setBatchId(batchId);
+        batchDefineEntity.setCodeNumber(request.getParameter("batch_id"));
+        batchDefineEntity.setRetMsg("");
+        batchDefineEntity.setCompleteDate(request.getParameter("complete_date"));
+        batchDefineEntity.setDomainId(request.getParameter("domain_id"));
+        batchDefineEntity.setBatchDesc(request.getParameter("batch_desc"));
+        batchDefineEntity.setBatchStatus(request.getParameter("batch_status"));
+        batchDefineEntity.setAsOfDate(request.getParameter("as_of_date"));
+        return batchDefineEntity;
     }
 }

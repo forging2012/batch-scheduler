@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.dao;
 
-import com.asofdate.dispatch.model.BatchDefineModel;
+import com.asofdate.dispatch.entity.BatchDefineEntity;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import java.util.List;
 public interface BatchDefineDao {
     List findAll(String domainId);
 
-    List<BatchDefineModel> getRunning(String domainId);
+    List<BatchDefineEntity> getRunning(String domainId);
 
-    int add(BatchDefineModel m);
+    int add(BatchDefineEntity m);
 
-    String delete(List<BatchDefineModel> m);
+    String delete(List<BatchDefineEntity> m);
 
-    int update(BatchDefineModel m);
+    int update(BatchDefineEntity m);
 
     int getStatus(String batchId);
 

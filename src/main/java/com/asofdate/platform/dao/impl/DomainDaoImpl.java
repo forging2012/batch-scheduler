@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.DomainDao;
-import com.asofdate.platform.model.DomainModel;
+import com.asofdate.platform.entity.DomainEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,26 +26,26 @@ public class DomainDaoImpl implements DomainDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<DomainModel> findAll() {
-        RowMapper<DomainModel> rowMapper = new BeanPropertyRowMapper<>(DomainModel.class);
-        List<DomainModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_118, rowMapper);
+    public List<DomainEntity> findAll() {
+        RowMapper<DomainEntity> rowMapper = new BeanPropertyRowMapper<>(DomainEntity.class);
+        List<DomainEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_118, rowMapper);
         return list;
     }
 
     @Override
-    public List<DomainModel> getAll() {
-        RowMapper<DomainModel> rowMapper = new BeanPropertyRowMapper<>(DomainModel.class);
-        List<DomainModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_025, rowMapper);
+    public List<DomainEntity> getAll() {
+        RowMapper<DomainEntity> rowMapper = new BeanPropertyRowMapper<>(DomainEntity.class);
+        List<DomainEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_025, rowMapper);
         return list;
     }
 
     @Override
-    public int update(DomainModel domainModel) {
+    public int update(DomainEntity domainEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_038,
-                domainModel.getDomain_desc(),
-                domainModel.getDomain_status_id(),
-                domainModel.getDomain_modify_user(),
-                domainModel.getDomain_id());
+                domainEntity.getDomain_desc(),
+                domainEntity.getDomain_status_id(),
+                domainEntity.getDomain_modify_user(),
+                domainEntity.getDomain_id());
     }
 
     @Transactional
@@ -59,30 +59,30 @@ public class DomainDaoImpl implements DomainDao {
     }
 
     @Override
-    public int add(DomainModel domainModel) {
+    public int add(DomainEntity domainEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_036,
-                domainModel.getDomain_id(),
-                domainModel.getDomain_desc(),
-                domainModel.getDomain_status_id(),
-                domainModel.getCreate_user_id(),
-                domainModel.getDomain_modify_user());
+                domainEntity.getDomain_id(),
+                domainEntity.getDomain_desc(),
+                domainEntity.getDomain_status_id(),
+                domainEntity.getCreate_user_id(),
+                domainEntity.getDomain_modify_user());
     }
 
     @Override
-    public DomainModel getDomainDetails(String domainId) {
-        DomainModel domainModel = new DomainModel();
+    public DomainEntity getDomainDetails(String domainId) {
+        DomainEntity domainEntity = new DomainEntity();
         jdbcTemplate.query(SqlDefine.sys_rdbms_084, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet resultSet) throws SQLException {
-                domainModel.setDomain_id(domainId);
-                domainModel.setDomain_desc(resultSet.getString("domain_desc"));
-                domainModel.setDomain_status_desc(resultSet.getString("domain_status_desc"));
-                domainModel.setMaintance_date(resultSet.getString("maintance_date"));
-                domainModel.setCreate_user_id(resultSet.getString("create_user_id"));
-                domainModel.setDomain_modify_user(resultSet.getString("domain_modify_user"));
-                domainModel.setDomain_modify_date(resultSet.getString("domain_modify_date"));
+                domainEntity.setDomain_id(domainId);
+                domainEntity.setDomain_desc(resultSet.getString("domain_desc"));
+                domainEntity.setDomain_status_desc(resultSet.getString("domain_status_desc"));
+                domainEntity.setMaintance_date(resultSet.getString("maintance_date"));
+                domainEntity.setCreate_user_id(resultSet.getString("create_user_id"));
+                domainEntity.setDomain_modify_user(resultSet.getString("domain_modify_user"));
+                domainEntity.setDomain_modify_date(resultSet.getString("domain_modify_date"));
             }
         }, domainId);
-        return domainModel;
+        return domainEntity;
     }
 }

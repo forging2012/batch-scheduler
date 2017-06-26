@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.HandleLogModel;
+import com.asofdate.platform.entity.HandleLogEntity;
 import com.asofdate.platform.service.HandleLogService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class HandleLogController {
         String domainId = JwtService.getConnectUser(request).getString("DomainId");
         String offset = request.getParameter("offset");
         String limit = request.getParameter("limit");
-        List<HandleLogModel> list = handleLogService.findAll(domainId, Integer.parseInt(offset), Integer.parseInt(limit));
+        List<HandleLogEntity> list = handleLogService.findAll(domainId, Integer.parseInt(offset), Integer.parseInt(limit));
         JSONObject jsonObject = new JSONObject();
         Integer total = handleLogService.getTotal(domainId);
         jsonObject.put("total", total);

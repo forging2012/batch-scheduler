@@ -1,8 +1,8 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.RoleResourceDao;
-import com.asofdate.platform.model.ResourceModel;
-import com.asofdate.platform.model.RoleResourceModel;
+import com.asofdate.platform.entity.ResourceEntity;
+import com.asofdate.platform.entity.RoleResourceEntity;
 import com.asofdate.platform.service.RoleResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ public class RoleResourceServiceImpl implements RoleResourceService {
     private RoleResourceDao roleResourceDao;
 
     @Override
-    public List<RoleResourceModel> findAll(String roleId) {
+    public List<RoleResourceEntity> findAll(String roleId) {
         return roleResourceDao.findAll(roleId);
     }
 
     @Override
-    public List<ResourceModel> getOther(String roleId) {
+    public List<ResourceEntity> getOther(String roleId) {
         return roleResourceDao.getOther(roleId);
     }
 

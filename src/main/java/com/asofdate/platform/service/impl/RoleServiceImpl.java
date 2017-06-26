@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.RoleDao;
-import com.asofdate.platform.model.RoleModel;
+import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.platform.service.RoleService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +18,22 @@ public class RoleServiceImpl implements RoleService {
     private RoleDao roleDao;
 
     @Override
-    public List<RoleModel> findAll(String domainId) {
+    public List<RoleEntity> findAll(String domainId) {
         return roleDao.findAll(domainId);
     }
 
     @Override
-    public List<RoleModel> getOther(String userId) {
+    public List<RoleEntity> getOther(String userId) {
         return roleDao.getOther(userId);
     }
 
     @Override
-    public List<RoleModel> getOwner(String userId) {
+    public List<RoleEntity> getOwner(String userId) {
         return roleDao.getOwner(userId);
     }
 
     @Override
-    public RoleModel getDetails(String roleId) {
+    public RoleEntity getDetails(String roleId) {
         return roleDao.getDetails(roleId);
     }
 
@@ -53,8 +53,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public int add(RoleModel roleModel) {
-        return roleDao.add(roleModel);
+    public int add(RoleEntity roleEntity) {
+        return roleDao.add(roleEntity);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public int update(RoleModel roleModel) {
-        return roleDao.update(roleModel);
+    public int update(RoleEntity roleEntity) {
+        return roleDao.update(roleEntity);
     }
 }

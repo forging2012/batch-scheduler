@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.GroupDependencyDao;
-import com.asofdate.dispatch.model.GroupDependencyModel;
+import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,15 +25,15 @@ public class GroupDependencyDaoImpl implements GroupDependencyDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<GroupDependencyModel> findAll(String domainId) {
-        RowMapper<GroupDependencyModel> rowMapper = new BeanPropertyRowMapper<GroupDependencyModel>(GroupDependencyModel.class);
-        List<GroupDependencyModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_112, rowMapper, domainId);
+    public List<GroupDependencyEntity> findAll(String domainId) {
+        RowMapper<GroupDependencyEntity> rowMapper = new BeanPropertyRowMapper<GroupDependencyEntity>(GroupDependencyEntity.class);
+        List<GroupDependencyEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_112, rowMapper, domainId);
         return list;
     }
 
     @Override
-    public List<GroupDependencyModel> findById(String domainId, String batchId) {
-        List<GroupDependencyModel> list = findAll(domainId);
+    public List<GroupDependencyEntity> findById(String domainId, String batchId) {
+        List<GroupDependencyEntity> list = findAll(domainId);
         for (int i = 0; i < list.size(); i++) {
             if (batchId.equals(list.get(i))) {
                 list.remove(i);

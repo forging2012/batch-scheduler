@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.TaskDefineModel;
+import com.asofdate.dispatch.entity.TaskDefineEntity;
 import com.asofdate.dispatch.service.TaskDefineService;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
@@ -40,7 +40,7 @@ public class TaskDefineController {
     * */
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<TaskDefineModel> getAll(HttpServletRequest request) {
+    public List<TaskDefineEntity> getAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
             domainId = JwtService.getConnectUser(request).get("DomainId").toString();
@@ -53,7 +53,7 @@ public class TaskDefineController {
     * */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String add(@Validated TaskDefineModel taskDefineModel, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
+    public String add(@Validated TaskDefineEntity taskDefineEntity, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             for (ObjectError m : bindingResult.getAllErrors()) {
                 response.setStatus(421);
@@ -75,14 +75,14 @@ public class TaskDefineController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String delete(HttpServletResponse response, HttpServletRequest request) {
-        List<TaskDefineModel> args = new ArrayList<>();
+        List<TaskDefineEntity> args = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            TaskDefineModel taskDefineModel = new TaskDefineModel();
-            taskDefineModel.setTaskId(jsonObject.getString("taskId"));
-            taskDefineModel.setDomainId(jsonObject.getString("domainId"));
-            args.add(taskDefineModel);
+            TaskDefineEntity taskDefineEntity = new TaskDefineEntity();
+            taskDefineEntity.setTaskId(jsonObject.getString("taskId"));
+            taskDefineEntity.setDomainId(jsonObject.getString("domainId"));
+            args.add(taskDefineEntity);
         }
         String msg = taskDefineService.delete(args);
         if ("success".equals(msg)) {
@@ -98,7 +98,7 @@ public class TaskDefineController {
     * */
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
-    public String update(@Validated TaskDefineModel taskDefineModel, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
+    public String update(@Validated TaskDefineEntity taskDefineEntity, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             for (ObjectError m : bindingResult.getAllErrors()) {
                 response.setStatus(421);
@@ -214,18 +214,18 @@ public class TaskDefineController {
         return Hret.success(200, "success", JSONObject.NULL);
     }
 
-    private TaskDefineModel parse(HttpServletRequest request) {
+    private TaskDefineEntity parse(HttpServletRequest request) {
         String userId = JwtService.getConnectUser(request).get("UserId").toString();
-        TaskDefineModel taskDefineModel = new TaskDefineModel();
+        TaskDefineEntity taskDefineEntity = new TaskDefineEntity();
         String taskId = JoinCode.join(request.getParameter("domainId"), request.getParameter("taskId"));
-        taskDefineModel.setTaskId(taskId);
-        taskDefineModel.setCodeNumber(request.getParameter("taskId"));
-        taskDefineModel.setCreateUser(userId);
-        taskDefineModel.setModifyUser(userId);
-        taskDefineModel.setDomainId(request.getParameter("domainId"));
-        taskDefineModel.setTaskDesc(request.getParameter("taskDesc"));
-        taskDefineModel.setTaskType(request.getParameter("taskType"));
-        taskDefineModel.setScriptFile(request.getParameter("scriptFile"));
-        return taskDefineModel;
+        taskDefineEntity.setTaskId(taskId);
+        taskDefineEntity.setCodeNumber(request.getParameter("taskId"));
+        taskDefineEntity.setCreateUser(userId);
+        taskDefineEntity.setModifyUser(userId);
+        taskDefineEntity.setDomainId(request.getParameter("domainId"));
+        taskDefineEntity.setTaskDesc(request.getParameter("taskDesc"));
+        taskDefineEntity.setTaskType(request.getParameter("taskType"));
+        taskDefineEntity.setScriptFile(request.getParameter("scriptFile"));
+        return taskDefineEntity;
     }
 }

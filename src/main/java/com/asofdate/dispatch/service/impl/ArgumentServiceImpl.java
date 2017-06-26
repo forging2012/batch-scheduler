@@ -4,9 +4,11 @@ import com.asofdate.dispatch.dao.ArgumentDefineDao;
 import com.asofdate.dispatch.dao.BatchArgumentDao;
 import com.asofdate.dispatch.dao.GroupArgumentDao;
 import com.asofdate.dispatch.dao.TaskArgumentDao;
-import com.asofdate.dispatch.model.*;
+import com.asofdate.dispatch.entity.*;
 import com.asofdate.dispatch.service.ArgumentService;
 import com.asofdate.dispatch.service.GroupTaskService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -61,18 +63,18 @@ public class ArgumentServiceImpl implements ArgumentService {
     private String batchId;
 
     // 任务组中唯一id与任务映射关系
-    private Map<String, GroupTaskModel> groupTaskMap;
+    private Map<String, GroupTaskEntity> groupTaskMap;
 
     // 参数定义列表,系统中所有已经定义的参数值
-    private List<ArgumentDefineModel> argDefineList;
-    private Map<String, ArgumentDefineModel> argDefineMap;
+    private List<ArgumentDefineEntity> argDefineList;
+    private Map<String, ArgumentDefineEntity> argDefineMap;
 
     // 批次参数信息
-    private List<BatchArgumentModel> batchArgList;
+    private List<BatchArgumentEntiry> batchArgList;
 
     // 任务参数信息
-    private List<TaskArgumentModel> taskArgList;
-    private Map<String, List<TaskArgumentModel>> taskArgMap;
+    private List<TaskArgumentEntity> taskArgList;
+    private Map<String, List<TaskArgumentEntity>> taskArgMap;
 
     /*
     *  任务组参数
@@ -81,7 +83,7 @@ public class ArgumentServiceImpl implements ArgumentService {
     *  上述这个map中的每一行,表示了这个任务组中,某一个配置的任务,包含的任务组类型的参数,
     *  如果没有任务类型的参数,则为空
     * */
-    private Map<String, List<GroupArgumentModel>> groupArgumentMap;
+    private Map<String, List<GroupArgumentEntity>> groupArgumentMap;
 
     /*
     * 初始化参数管理服务
@@ -98,19 +100,19 @@ public class ArgumentServiceImpl implements ArgumentService {
         // 这个id是任务组中配置任务时生成的id号,
         // 这个id号具有唯一性,一个id绑定一个具体的任务
         String id = null;
-        for (GroupArgumentModel m : groupArgumentDao.findAll(domainId)) {
+        for (GroupArgumentEntity m : groupArgumentDao.findAll(domainId)) {
             id = m.getId();
             if (this.groupArgumentMap.containsKey(id)) {
                 this.groupArgumentMap.get(id).add(m);
             } else {
-                List<GroupArgumentModel> l = new ArrayList<>();
+                List<GroupArgumentEntity> l = new ArrayList<>();
                 l.add(m);
                 this.groupArgumentMap.put(id, l);
             }
         }
 
-        List<GroupTaskModel> list = groupTaskService.findByBatchId(domainId, batchId);
-        for (GroupTaskModel m : list) {
+        List<GroupTaskEntity> list = groupTaskService.findByBatchId(domainId, batchId);
+        for (GroupTaskEntity m : list) {
             groupTaskMap.put(m.getUuid(), m);
         }
 
@@ -122,23 +124,48 @@ public class ArgumentServiceImpl implements ArgumentService {
     }
 
     @Override
-    public List<ArgumentDefineModel> findAll(String domainID) {
+    public List<ArgumentDefineEntity> findAll(String domainID) {
         return argumentDefineDao.findAll(domainID);
     }
 
     @Override
-    public int add(ArgumentDefineModel m) {
-        return argumentDefineDao.add(m);
+    public RetMsg addArgument(ArgumentDefineEntity m) {
+        try {
+            int size = argumentDefineDao.add(m);
+            if (1 == size){
+                return new RetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE,"添加参数定义信息失败，请联系管理员",m);
+        } catch (Exception e){
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+        }
     }
 
     @Override
-    public String delete(List<ArgumentDefineModel> m) {
-        return argumentDefineDao.delete(m);
+    public RetMsg deleteArgument(List<ArgumentDefineEntity> m) {
+        try {
+            String msg = argumentDefineDao.delete(m);
+            if ("success".equals(msg)) {
+                return new RetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE,"删除参数信息失败，请联系管理员",m);
+        } catch (Exception e){
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+        }
     }
 
     @Override
-    public int update(ArgumentDefineModel m) {
-        return argumentDefineDao.update(m);
+    public RetMsg updateArgument(ArgumentDefineEntity m) {
+        try {
+            int size = argumentDefineDao.update(m);
+            if (1 == size){
+                return new RetMsg(SysStatus.SUCCESS_CODE,"success",m);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE,"更新参数信息失败，请联系管理员",m);
+        } catch (Exception e){
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+        }
+
     }
 
     /*
@@ -149,22 +176,22 @@ public class ArgumentServiceImpl implements ArgumentService {
     * 3: 固定参数
     * */
     @Override
-    public List<TaskArgumentModel> queryArgument(String id) {
+    public List<TaskArgumentEntity> queryArgument(String id) {
         String taskId = groupTaskMap.get(id).getTaskId();
         if (taskId == null) {
             return null;
         }
 
-        List<TaskArgumentModel> list = taskArgMap.get(taskId);
+        List<TaskArgumentEntity> list = taskArgMap.get(taskId);
         if (list == null) {
             return null;
         }
 
-        for (TaskArgumentModel m : list) {
+        for (TaskArgumentEntity m : list) {
             String argType = argDefineMap.get(m.getArgId()).getArgType();
             switch (argType) {
                 case GROUP_ARGUMENT:
-                    for (GroupArgumentModel g : groupArgumentMap.get(id)) {
+                    for (GroupArgumentEntity g : groupArgumentMap.get(id)) {
                         if (g.getArgId().equals(m.getArgId())) {
                             m.setArgValue(g.getArgValue());
                             break;
@@ -190,18 +217,18 @@ public class ArgumentServiceImpl implements ArgumentService {
         /*
         * map中存放的全部是批次参数信息
         * key :  arg_id
-        * value : BatchArgumentModel
+        * value : BatchArgumentEntiry
         * 同一个域中,批次编码唯一, 批次参数在这个批次中的值也是唯一
         * */
-        Map<String, BatchArgumentModel> map = new HashMap<>();
-        for (BatchArgumentModel m : batchArgList) {
+        Map<String, BatchArgumentEntiry> map = new HashMap<>();
+        for (BatchArgumentEntiry m : batchArgList) {
             map.put(m.getArgId(), m);
         }
 
         // argDefineMap 变量中存放的是整个批次中所有的参数信息, 包括固定参数,任务参数,任务组参数,批次参数
         argDefineMap = new HashMap<>();
 
-        for (ArgumentDefineModel m : argDefineList) {
+        for (ArgumentDefineEntity m : argDefineList) {
             // 如果是批次参数, 需要从map中取出批次参数的值
             if (BATCH_ARGUMENT.equals(m.getArgType())) {
                 argId = m.getArgId();
@@ -229,11 +256,11 @@ public class ArgumentServiceImpl implements ArgumentService {
     * */
     private void initTaskArgMap() {
         taskArgMap = new HashMap<>();
-        for (TaskArgumentModel m : taskArgList) {
+        for (TaskArgumentEntity m : taskArgList) {
             if (taskArgMap.containsKey(m.getTaskId())) {
                 taskArgMap.get(m.getTaskId()).add(m);
             } else {
-                List<TaskArgumentModel> l = new ArrayList<>();
+                List<TaskArgumentEntity> l = new ArrayList<>();
                 l.add(m);
                 taskArgMap.put(m.getTaskId(), l);
             }

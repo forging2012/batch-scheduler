@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.UserCheckDao;
-import com.asofdate.platform.model.UserLoginModel;
+import com.asofdate.platform.entity.UserLoginEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,7 +25,7 @@ public class UserCheckDaoImpl implements UserCheckDao {
         List list = jdbcTemplate.query(SqlDefine.sys_rdbms_001, new RowMapper() {
             @Override
             public Object mapRow(ResultSet resultSet, int i) throws SQLException {
-                UserLoginModel uc = new UserLoginModel();
+                UserLoginEntity uc = new UserLoginEntity();
                 uc.setUsername(resultSet.getString("user_id"));
                 uc.setPassword(resultSet.getString("user_passwd"));
                 uc.setStatusId(resultSet.getString("status_id"));

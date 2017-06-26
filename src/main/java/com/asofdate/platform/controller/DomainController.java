@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.DomainModel;
+import com.asofdate.platform.entity.DomainEntity;
 import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.DomainService;
 import com.asofdate.utils.Hret;
@@ -60,8 +60,8 @@ public class DomainController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        DomainModel domainModel = parse(request);
-        int size = domainService.add(domainModel);
+        DomainEntity domainEntity = parse(request);
+        int size = domainService.add(domainEntity);
         if (size == 1) {
             return Hret.success(200, "success", JSONObject.NULL);
         }
@@ -70,7 +70,7 @@ public class DomainController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)
-    public DomainModel getDomainDetails(HttpServletRequest request) {
+    public DomainEntity getDomainDetails(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
             logger.info("domain id is empty, return null");
@@ -82,14 +82,14 @@ public class DomainController {
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
     public String update(HttpServletResponse response, HttpServletRequest request) {
-        DomainModel domainModel = parse(request);
-        Boolean status = authService.domainAuth(request, domainModel.getDomain_id(), "w").getBoolean("status");
+        DomainEntity domainEntity = parse(request);
+        Boolean status = authService.domainAuth(request, domainEntity.getDomain_id(), "w").getBoolean("status");
         if (!status) {
             response.setStatus(403);
-            return Hret.error(403, "你没有权限编辑域 [ " + domainModel.getDomain_desc() + " ]", domainModel);
+            return Hret.error(403, "你没有权限编辑域 [ " + domainEntity.getDomain_desc() + " ]", domainEntity);
         }
         try {
-            int size = domainService.update(domainModel);
+            int size = domainService.update(domainEntity);
             if (size == 1) {
                 return Hret.success(200, "success", JSONObject.NULL);
             }
@@ -101,15 +101,15 @@ public class DomainController {
         }
     }
 
-    private DomainModel parse(HttpServletRequest request) {
-        DomainModel domainModel = new DomainModel();
-        domainModel.setDomain_id(request.getParameter("domain_id"));
-        domainModel.setDomain_desc(request.getParameter("domain_desc"));
-        domainModel.setDomain_status_cd(request.getParameter("domain_status_cd"));
-        domainModel.setDomain_status_id(request.getParameter("domain_status_id"));
+    private DomainEntity parse(HttpServletRequest request) {
+        DomainEntity domainEntity = new DomainEntity();
+        domainEntity.setDomain_id(request.getParameter("domain_id"));
+        domainEntity.setDomain_desc(request.getParameter("domain_desc"));
+        domainEntity.setDomain_status_cd(request.getParameter("domain_status_cd"));
+        domainEntity.setDomain_status_id(request.getParameter("domain_status_id"));
         String userId = JwtService.getConnectUser(request).getString("UserId");
-        domainModel.setDomain_modify_user(userId);
-        domainModel.setCreate_user_id(userId);
-        return domainModel;
+        domainEntity.setDomain_modify_user(userId);
+        domainEntity.setCreate_user_id(userId);
+        return domainEntity;
     }
 }

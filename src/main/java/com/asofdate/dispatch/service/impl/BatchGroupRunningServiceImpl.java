@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.BatchGroupRunningDao;
-import com.asofdate.dispatch.model.BatchGroupStatusModel;
+import com.asofdate.dispatch.entity.BatchGroupStatusEntity;
 import com.asofdate.dispatch.service.BatchGroupRunningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class BatchGroupRunningServiceImpl implements BatchGroupRunningService {
     private BatchGroupRunningDao batchGroupRunningDao;
 
     @Override
-    public List<BatchGroupStatusModel> findAll(String batchId) {
+    public List<BatchGroupStatusEntity> findAll(String batchId) {
         return batchGroupRunningDao.findAll(batchId);
     }
 
@@ -27,7 +27,7 @@ public class BatchGroupRunningServiceImpl implements BatchGroupRunningService {
     }
 
     @Override
-    public BatchGroupStatusModel getDetails(String batchId, String gid) {
+    public BatchGroupStatusEntity getDetails(String batchId, String gid) {
         return batchGroupRunningDao.getDetails(batchId, gid);
     }
 }

@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.ShareDomainModel;
+import com.asofdate.platform.entity.ShareDomainEntity;
 import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.ShareDomainService;
 import com.asofdate.utils.Hret;
@@ -40,7 +40,7 @@ public class ShareDomainController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        ShareDomainModel arg = parse(request);
+        ShareDomainEntity arg = parse(request);
         String domainid = arg.getDomain_id();
         Boolean status = authService.domainAuth(request, domainid, "w").getBoolean("status");
         if (!status) {
@@ -62,7 +62,7 @@ public class ShareDomainController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletResponse response, HttpServletRequest request) {
-        ShareDomainModel arg = parse(request);
+        ShareDomainEntity arg = parse(request);
         if (arg == null) {
             return Hret.error(421, "解析参数失败", JSONObject.NULL);
         }
@@ -114,15 +114,15 @@ public class ShareDomainController {
         return shareDomainService.unShareTarget(domainId);
     }
 
-    private ShareDomainModel parse(HttpServletRequest request) {
-        ShareDomainModel shareDomainModel = new ShareDomainModel();
-        shareDomainModel.setDomain_id(request.getParameter("domain_id"));
-        shareDomainModel.setTarget_domain_id(request.getParameter("target_domain_id"));
-        shareDomainModel.setAuthorization_level(request.getParameter("authorization_level"));
-        shareDomainModel.setUuid(request.getParameter("uuid"));
+    private ShareDomainEntity parse(HttpServletRequest request) {
+        ShareDomainEntity shareDomainEntity = new ShareDomainEntity();
+        shareDomainEntity.setDomain_id(request.getParameter("domain_id"));
+        shareDomainEntity.setTarget_domain_id(request.getParameter("target_domain_id"));
+        shareDomainEntity.setAuthorization_level(request.getParameter("authorization_level"));
+        shareDomainEntity.setUuid(request.getParameter("uuid"));
         String userId = JwtService.getConnectUser(request).getString("UserId");
-        shareDomainModel.setCreate_user(userId);
-        shareDomainModel.setModify_user(userId);
-        return shareDomainModel;
+        shareDomainEntity.setCreate_user(userId);
+        shareDomainEntity.setModify_user(userId);
+        return shareDomainEntity;
     }
 }

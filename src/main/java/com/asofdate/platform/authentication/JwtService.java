@@ -1,6 +1,6 @@
 package com.asofdate.platform.authentication;
 
-import com.asofdate.platform.model.UserDetailsModel;
+import com.asofdate.platform.entity.UserDetailsEntity;
 import com.asofdate.platform.service.UserDetailsService;
 import com.asofdate.utils.Hret;
 import io.jsonwebtoken.Claims;
@@ -54,9 +54,9 @@ public class JwtService {
     }
 
     public static void addAuthentication(HttpServletResponse response, String username) throws IOException {
-        UserDetailsModel userDetailsModel = jwtService.userDetailsService.findById(username);
+        UserDetailsEntity userDetailsEntity = jwtService.userDetailsService.findById(username);
 
-        if (userDetailsModel == null) {
+        if (userDetailsEntity == null) {
             logger.info("用户{}不存在:", username);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
@@ -65,9 +65,9 @@ public class JwtService {
         String JWT = Jwts.builder()
                 // 保存权限（角色）
                 .claim("authorities", JWT_ROLES)
-                .claim("DomainId", userDetailsModel.getDomain_id())
-                .claim("OrgUnitId", userDetailsModel.getOrg_unit_id())
-                .claim("UserId", userDetailsModel.getUser_id())
+                .claim("DomainId", userDetailsEntity.getDomain_id())
+                .claim("OrgUnitId", userDetailsEntity.getOrg_unit_id())
+                .claim("UserId", userDetailsEntity.getUser_id())
                 // 用户名写入标题
                 .setSubject(username)
                 .setIssuer("hzwy23")

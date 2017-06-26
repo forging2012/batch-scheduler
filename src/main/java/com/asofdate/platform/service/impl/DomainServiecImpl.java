@@ -2,7 +2,7 @@ package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.DomainDao;
 import com.asofdate.platform.dao.DomainShareDao;
-import com.asofdate.platform.model.DomainModel;
+import com.asofdate.platform.entity.DomainEntity;
 import com.asofdate.platform.service.DomainService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ public class DomainServiecImpl implements DomainService {
 
     @Override
     public JSONObject findAll(String domainId) {
-        List<DomainModel> list = domainDao.findAll();
+        List<DomainEntity> list = domainDao.findAll();
         Set<String> set = domainShareDao.findAll(domainId);
         for (int i = 0; i < list.size(); i++) {
             if (!set.contains(list.get(i).getDomain_id())) {
@@ -40,13 +40,13 @@ public class DomainServiecImpl implements DomainService {
     }
 
     @Override
-    public List<DomainModel> getAll() {
+    public List<DomainEntity> getAll() {
         return domainDao.getAll();
     }
 
     @Override
-    public int update(DomainModel domainModel) {
-        return domainDao.update(domainModel);
+    public int update(DomainEntity domainEntity) {
+        return domainDao.update(domainEntity);
     }
 
     @Override
@@ -55,12 +55,12 @@ public class DomainServiecImpl implements DomainService {
     }
 
     @Override
-    public int add(DomainModel domainModel) {
-        return domainDao.add(domainModel);
+    public int add(DomainEntity domainEntity) {
+        return domainDao.add(domainEntity);
     }
 
     @Override
-    public DomainModel getDomainDetails(String domainId) {
+    public DomainEntity getDomainDetails(String domainId) {
         return domainDao.getDomainDetails(domainId);
     }
 }

@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.BatchHistoryDao;
-import com.asofdate.dispatch.model.BatchHistoryModel;
+import com.asofdate.dispatch.entity.BatchHistoryEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,9 +23,9 @@ public class BatchHistoryDaoImpl implements BatchHistoryDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<BatchHistoryModel> findAll(String domainId) {
-        RowMapper<BatchHistoryModel> rowMapper = new BeanPropertyRowMapper<>(BatchHistoryModel.class);
-        List<BatchHistoryModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_193, rowMapper, domainId);
+    public List<BatchHistoryEntity> findAll(String domainId) {
+        RowMapper<BatchHistoryEntity> rowMapper = new BeanPropertyRowMapper<>(BatchHistoryEntity.class);
+        List<BatchHistoryEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_193, rowMapper, domainId);
         return list;
     }
 

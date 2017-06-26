@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.UserCheckDao;
-import com.asofdate.platform.model.UserLoginModel;
+import com.asofdate.platform.entity.UserLoginEntity;
 import com.asofdate.platform.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserCheckDao userCheckDao;
 
-    private UserLoginModel setEmpty(UserLoginModel userCheck, String userId) {
+    private UserLoginEntity setEmpty(UserLoginEntity userCheck, String userId) {
         userCheck.setFlag(false);
         userCheck.setUsername(userId);
         userCheck.setMessage("The user does not exist");
@@ -26,9 +26,9 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public UserLoginModel loginValidator(String userId, String password) {
-        List<UserLoginModel> list = userCheckDao.findByUserId(userId);
-        UserLoginModel userCheck = new UserLoginModel();
+    public UserLoginEntity loginValidator(String userId, String password) {
+        List<UserLoginEntity> list = userCheckDao.findByUserId(userId);
+        UserLoginEntity userCheck = new UserLoginEntity();
         if (list.size() == 0) {
             userCheck.setRetCode("401");
             return setEmpty(userCheck, userId);
@@ -75,10 +75,10 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public UserLoginModel findByUserId(String userId) {
-        List<UserLoginModel> list = userCheckDao.findByUserId(userId);
+    public UserLoginEntity findByUserId(String userId) {
+        List<UserLoginEntity> list = userCheckDao.findByUserId(userId);
         if (list.size() == 0) {
-            UserLoginModel userCheck = new UserLoginModel();
+            UserLoginEntity userCheck = new UserLoginEntity();
             return setEmpty(userCheck, userId);
         }
         return list.get(0);

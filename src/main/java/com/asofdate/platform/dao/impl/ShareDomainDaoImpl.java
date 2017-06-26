@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.ShareDomainDao;
-import com.asofdate.platform.model.ShareDomainModel;
+import com.asofdate.platform.entity.ShareDomainEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,25 +23,25 @@ public class ShareDomainDaoImpl implements ShareDomainDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ShareDomainModel> findAll(String domainId) {
-        RowMapper<ShareDomainModel> rowMapper = new BeanPropertyRowMapper<>(ShareDomainModel.class);
+    public List<ShareDomainEntity> findAll(String domainId) {
+        RowMapper<ShareDomainEntity> rowMapper = new BeanPropertyRowMapper<>(ShareDomainEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_083, rowMapper, domainId);
     }
 
     @Override
-    public List<ShareDomainModel> unShareTarget(String domainId) {
-        RowMapper<ShareDomainModel> rowMapper = new BeanPropertyRowMapper<>(ShareDomainModel.class);
+    public List<ShareDomainEntity> unShareTarget(String domainId) {
+        RowMapper<ShareDomainEntity> rowMapper = new BeanPropertyRowMapper<>(ShareDomainEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_085, rowMapper, domainId, domainId);
     }
 
     @Override
-    public int add(ShareDomainModel shareDomainModel) {
+    public int add(ShareDomainEntity shareDomainEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_086,
-                shareDomainModel.getDomain_id(),
-                shareDomainModel.getTarget_domain_id(),
-                shareDomainModel.getAuthorization_level(),
-                shareDomainModel.getCreate_user(),
-                shareDomainModel.getModify_user());
+                shareDomainEntity.getDomain_id(),
+                shareDomainEntity.getTarget_domain_id(),
+                shareDomainEntity.getAuthorization_level(),
+                shareDomainEntity.getCreate_user(),
+                shareDomainEntity.getModify_user());
     }
 
     @Transactional
@@ -56,10 +56,10 @@ public class ShareDomainDaoImpl implements ShareDomainDao {
     }
 
     @Override
-    public int update(ShareDomainModel shareDomainModel) {
+    public int update(ShareDomainEntity shareDomainEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_088,
-                shareDomainModel.getAuthorization_level(),
-                shareDomainModel.getModify_user(),
-                shareDomainModel.getUuid());
+                shareDomainEntity.getAuthorization_level(),
+                shareDomainEntity.getModify_user(),
+                shareDomainEntity.getUuid());
     }
 }

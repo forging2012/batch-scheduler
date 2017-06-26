@@ -2,9 +2,9 @@ package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.MenuDao;
 import com.asofdate.platform.dao.ResourceDao;
-import com.asofdate.platform.model.MenuModel;
-import com.asofdate.platform.model.ResourceModel;
-import com.asofdate.platform.model.ThemeValueModel;
+import com.asofdate.platform.entity.MenuEntity;
+import com.asofdate.platform.entity.ResourceEntity;
+import com.asofdate.platform.entity.ThemeValueEntity;
 import com.asofdate.sql.SqlDefine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +30,15 @@ public class MenuDaoImpl implements MenuDao {
     private ResourceDao resourceDao;
 
     @Override
-    public List<MenuModel> findAll() {
-        RowMapper<MenuModel> rowMapper = new BeanPropertyRowMapper<>(MenuModel.class);
+    public List<MenuEntity> findAll() {
+        RowMapper<MenuEntity> rowMapper = new BeanPropertyRowMapper<>(MenuEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_071, rowMapper);
     }
 
     @Override
-    public MenuModel getDetails(String resId) {
-        RowMapper<MenuModel> rowMapper = new BeanPropertyRowMapper<>(MenuModel.class);
-        List<MenuModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_089, rowMapper, resId);
+    public MenuEntity getDetails(String resId) {
+        RowMapper<MenuEntity> rowMapper = new BeanPropertyRowMapper<>(MenuEntity.class);
+        List<MenuEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_089, rowMapper, resId);
         if (list.size() == 1) {
             return list.get(0);
         }
@@ -47,27 +47,27 @@ public class MenuDaoImpl implements MenuDao {
 
     @Transactional
     @Override
-    public String add(ThemeValueModel themeValueModel) {
+    public String add(ThemeValueEntity themeValueEntity) {
         try {
             jdbcTemplate.update(SqlDefine.sys_rdbms_072,
-                    themeValueModel.getRes_id(),
-                    themeValueModel.getRes_name(),
-                    themeValueModel.getRes_attr(),
-                    themeValueModel.getRes_up_id(),
-                    themeValueModel.getRes_type());
+                    themeValueEntity.getRes_id(),
+                    themeValueEntity.getRes_name(),
+                    themeValueEntity.getRes_attr(),
+                    themeValueEntity.getRes_up_id(),
+                    themeValueEntity.getRes_type());
 
-            String resType = themeValueModel.getRes_type();
+            String resType = themeValueEntity.getRes_type();
             if ("0".equals(resType) || "1".equals(resType) || "2".equals(resType)) {
                 jdbcTemplate.update(SqlDefine.sys_rdbms_008,
-                        themeValueModel.getTheme_id(),
-                        themeValueModel.getRes_id(),
-                        themeValueModel.getRes_url(),
-                        themeValueModel.getRes_open_type(),
-                        themeValueModel.getRes_bg_color(),
-                        themeValueModel.getRes_class(),
-                        themeValueModel.getGroup_id(),
-                        themeValueModel.getRes_img(),
-                        themeValueModel.getSort_id());
+                        themeValueEntity.getTheme_id(),
+                        themeValueEntity.getRes_id(),
+                        themeValueEntity.getRes_url(),
+                        themeValueEntity.getRes_open_type(),
+                        themeValueEntity.getRes_bg_color(),
+                        themeValueEntity.getRes_class(),
+                        themeValueEntity.getGroup_id(),
+                        themeValueEntity.getRes_img(),
+                        themeValueEntity.getSort_id());
             }
             return "success";
         } catch (Exception e) {
@@ -79,10 +79,10 @@ public class MenuDaoImpl implements MenuDao {
     @Transactional
     @Override
     public String delete(String resId) {
-        List<ResourceModel> list = resourceDao.findSubByUpId(resId);
+        List<ResourceEntity> list = resourceDao.findSubByUpId(resId);
         try {
             jdbcTemplate.update(SqlDefine.sys_rdbms_077, resId);
-            for (ResourceModel m : list) {
+            for (ResourceEntity m : list) {
                 jdbcTemplate.update(SqlDefine.sys_rdbms_077, m.getRes_id());
             }
             return "success";
@@ -94,8 +94,8 @@ public class MenuDaoImpl implements MenuDao {
 
     @Override
     public String update(String resId, String resDesc, String resUpId) {
-        List<ResourceModel> list = resourceDao.findSubByUpId(resId);
-        for (ResourceModel m : list) {
+        List<ResourceEntity> list = resourceDao.findSubByUpId(resId);
+        for (ResourceEntity m : list) {
             if (resUpId.equals(m.getRes_id())) {
                 return "不能将菜单的上级编码设置成自己的下级菜单";
             }
@@ -105,9 +105,9 @@ public class MenuDaoImpl implements MenuDao {
     }
 
     @Override
-    public ThemeValueModel getThemeDetails(String themeId, String resId) {
-        RowMapper<ThemeValueModel> rowMapper = new BeanPropertyRowMapper<>(ThemeValueModel.class);
-        List<ThemeValueModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_070, rowMapper, themeId, resId);
+    public ThemeValueEntity getThemeDetails(String themeId, String resId) {
+        RowMapper<ThemeValueEntity> rowMapper = new BeanPropertyRowMapper<>(ThemeValueEntity.class);
+        List<ThemeValueEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_070, rowMapper, themeId, resId);
         if (list.size() == 1) {
             return list.get(0);
         }
@@ -115,22 +115,22 @@ public class MenuDaoImpl implements MenuDao {
     }
 
     @Override
-    public String updateTheme(ThemeValueModel themeValueModel) {
-        String resId = themeValueModel.getRes_id();
-        String themeId = themeValueModel.getTheme_id();
+    public String updateTheme(ThemeValueEntity themeValueEntity) {
+        String resId = themeValueEntity.getRes_id();
+        String themeId = themeValueEntity.getTheme_id();
         Integer cnt = jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_006, Integer.class, themeId, resId);
         if (cnt == 0) {
             try {
                 jdbcTemplate.update(SqlDefine.sys_rdbms_008,
-                        themeValueModel.getTheme_id(),
-                        themeValueModel.getRes_id(),
-                        themeValueModel.getRes_url(),
-                        themeValueModel.getRes_open_type(),
-                        themeValueModel.getRes_bg_color(),
-                        themeValueModel.getRes_class(),
-                        themeValueModel.getGroup_id(),
-                        themeValueModel.getRes_img(),
-                        themeValueModel.getSort_id());
+                        themeValueEntity.getTheme_id(),
+                        themeValueEntity.getRes_id(),
+                        themeValueEntity.getRes_url(),
+                        themeValueEntity.getRes_open_type(),
+                        themeValueEntity.getRes_bg_color(),
+                        themeValueEntity.getRes_class(),
+                        themeValueEntity.getGroup_id(),
+                        themeValueEntity.getRes_img(),
+                        themeValueEntity.getSort_id());
                 return "success";
             } catch (Exception e) {
                 logger.info(e.getMessage());
@@ -139,15 +139,15 @@ public class MenuDaoImpl implements MenuDao {
         }
         try {
             jdbcTemplate.update(SqlDefine.sys_rdbms_009,
-                    themeValueModel.getRes_url(),
-                    themeValueModel.getRes_bg_color(),
-                    themeValueModel.getRes_class(),
-                    themeValueModel.getRes_img(),
-                    themeValueModel.getGroup_id(),
-                    themeValueModel.getSort_id(),
-                    themeValueModel.getRes_open_type(),
-                    themeValueModel.getTheme_id(),
-                    themeValueModel.getRes_id());
+                    themeValueEntity.getRes_url(),
+                    themeValueEntity.getRes_bg_color(),
+                    themeValueEntity.getRes_class(),
+                    themeValueEntity.getRes_img(),
+                    themeValueEntity.getGroup_id(),
+                    themeValueEntity.getSort_id(),
+                    themeValueEntity.getRes_open_type(),
+                    themeValueEntity.getTheme_id(),
+                    themeValueEntity.getRes_id());
             return "success";
         } catch (Exception e) {
             logger.info(e.getMessage());

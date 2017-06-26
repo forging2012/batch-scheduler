@@ -1,7 +1,7 @@
 package com.asofdate.dispatch;
 
 import com.asofdate.dispatch.dao.*;
-import com.asofdate.dispatch.model.*;
+import com.asofdate.dispatch.entity.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ public class DMTests {
 
     @Test
     public void testTaskDefineDao(){
-        List<TaskDefineModel> list = taskDefineDao.findAll("mas");
-        for (TaskDefineModel m: list){
+        List<TaskDefineEntity> list = taskDefineDao.findAll("mas");
+        for (TaskDefineEntity m: list){
             System.out.print("code number is :" + m.getCodeNumber());
             System.out.print("code number is :" + m.getCreateUser());
             System.out.print("code number is :" + m.getCreateDate());
@@ -58,56 +58,49 @@ public class DMTests {
 
     @Test
     public void testArgumentDefineDao(){
-        List<ArgumentDefineModel> list = argumentDefineDao.findAll("mas");
-        for (ArgumentDefineModel m:list){
+        List<ArgumentDefineEntity> list = argumentDefineDao.findAll("mas");
+        for (ArgumentDefineEntity m:list){
             System.out.println("argument id is :" + m.getArgId());
         }
     }
 
-    @Test
-    public void testBatchArgumentDao(){
-        List<BatchArgumentModel> list = batchArgumentDao.findAll("mas");
-        for (BatchArgumentModel m : list){
-            System.out.println("batch id is :" + m.getBatchId()+", argument is :" + m.getArgId());
-        }
-    }
 
     @Test
     public void testBatchGroupDao(){
-        List<BatchGroupModel> list = batchGroupDao.findAll("mas");
-        for (BatchGroupModel m:list){
+        List<BatchGroupEntity> list = batchGroupDao.findAll("mas");
+        for (BatchGroupEntity m:list){
             System.out.println("Batch is :" + m.getBatchId()+", group id is :" + m.getGroupId());
         }
     }
 
     @Test
     public void testGroupDefineDao(){
-        List<GroupDefineModel> list = groupDefineDao.findAll("mas");
-        for (GroupDefineModel m:list){
+        List<GroupDefineEntity> list = groupDefineDao.findAll("mas");
+        for (GroupDefineEntity m:list){
             System.out.println("Group id is: "+m.getGroupId());
         }
     }
 
     @Test
     public void testGroupTaskDao(){
-        List<GroupTaskModel> list = groupTaskDao.findAll("mas");
-        for (GroupTaskModel m:list){
+        List<GroupTaskEntity> list = groupTaskDao.findAll("mas");
+        for (GroupTaskEntity m:list){
             System.out.println("group id is:" + m.getGroupId()+",task id is:" + m.getTaskId());
         }
     }
 
     @Test
     public void testTaskArgumentDao(){
-        List<TaskArgumentModel> list = taskArgumentDao.findAll("mas");
-        for (TaskArgumentModel m: list){
+        List<TaskArgumentEntity> list = taskArgumentDao.findAll("mas");
+        for (TaskArgumentEntity m: list){
             System.out.println("task id is :" + m.getTaskId()+",argument id is:"+m.getArgId());
         }
     }
 
     @Test
     public void testBatchDefineDao(){
-        List<BatchDefineModel> list = batchDefineDao.findAll("mas");
-        for (BatchDefineModel m:list){
+        List<BatchDefineEntity> list = batchDefineDao.findAll("mas");
+        for (BatchDefineEntity m:list){
             System.out.println("batch id is:" + m.getBatchDesc());
         }
     }

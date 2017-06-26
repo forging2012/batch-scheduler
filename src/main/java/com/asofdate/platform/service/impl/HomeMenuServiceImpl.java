@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.HomeMenuDao;
-import com.asofdate.platform.model.HomeMenuModel;
+import com.asofdate.platform.entity.HomeMenuEntity;
 import com.asofdate.platform.service.HomeMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,8 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     public HomeMenuDao homeMenuDao;
 
     @Override
-    public List<HomeMenuModel> findAuthedMenus(String userId, String typeId, String resId) {
-        List<HomeMenuModel> list = homeMenuDao.findById(userId, typeId, resId);
+    public List<HomeMenuEntity> findAuthedMenus(String userId, String typeId, String resId) {
+        List<HomeMenuEntity> list = homeMenuDao.findById(userId, typeId, resId);
         return list;
     }
 }

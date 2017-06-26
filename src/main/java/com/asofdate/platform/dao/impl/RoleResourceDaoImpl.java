@@ -2,8 +2,8 @@ package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.ResourceDao;
 import com.asofdate.platform.dao.RoleResourceDao;
-import com.asofdate.platform.model.ResourceModel;
-import com.asofdate.platform.model.RoleResourceModel;
+import com.asofdate.platform.entity.ResourceEntity;
+import com.asofdate.platform.entity.RoleResourceEntity;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.JoinCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +32,16 @@ public class RoleResourceDaoImpl implements RoleResourceDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<RoleResourceModel> findAll(String roleId) {
-        RowMapper<RoleResourceModel> rowMapper = new BeanPropertyRowMapper<>(RoleResourceModel.class);
+    public List<RoleResourceEntity> findAll(String roleId) {
+        RowMapper<RoleResourceEntity> rowMapper = new BeanPropertyRowMapper<>(RoleResourceEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_209, rowMapper, roleId);
     }
 
     @Override
-    public List<ResourceModel> getOther(String roleId) {
+    public List<ResourceEntity> getOther(String roleId) {
         // 已经拥有的曲线列表
         Set<String> set = getAll(roleId);
-        List<ResourceModel> list = resourceDao.findAll();
+        List<ResourceEntity> list = resourceDao.findAll();
         Set<String> unSet = new HashSet<>();
         Set<String> ret = new HashSet<>();
 
@@ -74,7 +74,7 @@ public class RoleResourceDaoImpl implements RoleResourceDao {
     @Transactional
     @Override
     public int revoke(String roleId, String resId) {
-        List<ResourceModel> list = resourceDao.findAll();
+        List<ResourceEntity> list = resourceDao.findAll();
         Set<String> child = new HashSet<>();
         getChild(list, resId, child);
         child.add(resId);
@@ -88,7 +88,7 @@ public class RoleResourceDaoImpl implements RoleResourceDao {
     @Transactional
     @Override
     public int auth(String roleId, String resId) {
-        List<ResourceModel> list = resourceDao.findAll();
+        List<ResourceEntity> list = resourceDao.findAll();
         Set<String> newRes = new HashSet<>();
 
         Set<String> parent = new HashSet<>();
@@ -119,13 +119,13 @@ public class RoleResourceDaoImpl implements RoleResourceDao {
         return 1;
     }
 
-    private void getParent(List<ResourceModel> all, String resId, Set<String> set) {
-        for (ResourceModel m : all) {
+    private void getParent(List<ResourceEntity> all, String resId, Set<String> set) {
+        for (ResourceEntity m : all) {
             if (resId.equals(m.getRes_id())) {
                 if (set.contains(m.getRes_up_id())) {
                     continue;
                 }
-                for (ResourceModel c : all) {
+                for (ResourceEntity c : all) {
                     if (m.getRes_up_id().equals(c.getRes_id())) {
                         set.add(m.getRes_up_id());
                         getParent(all, m.getRes_up_id(), set);
@@ -136,8 +136,8 @@ public class RoleResourceDaoImpl implements RoleResourceDao {
         }
     }
 
-    private void getChild(List<ResourceModel> all, String resId, Set<String> set) {
-        for (ResourceModel m : all) {
+    private void getChild(List<ResourceEntity> all, String resId, Set<String> set) {
+        for (ResourceEntity m : all) {
             if (resId.equals(m.getRes_up_id())) {
                 if (set.contains(m.getRes_id())) {
                     continue;

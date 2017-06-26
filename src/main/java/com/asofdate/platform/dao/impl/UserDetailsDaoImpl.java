@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.UserDetailsDao;
-import com.asofdate.platform.model.UserDetailsModel;
+import com.asofdate.platform.entity.UserDetailsEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -22,7 +22,7 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
 
     @Override
     public List findById(String userId) {
-        RowMapper<UserDetailsModel> rowMapper = new BeanPropertyRowMapper<UserDetailsModel>(UserDetailsModel.class);
+        RowMapper<UserDetailsEntity> rowMapper = new BeanPropertyRowMapper<UserDetailsEntity>(UserDetailsEntity.class);
         List list = jdbcTemplate.query(SqlDefine.sys_rdbms_023, rowMapper, userId);
         return list;
     }

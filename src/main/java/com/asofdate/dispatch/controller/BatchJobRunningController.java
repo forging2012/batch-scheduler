@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.BatchJobStatusModel;
+import com.asofdate.dispatch.entity.BatchJobStatusEntity;
 import com.asofdate.dispatch.service.BatchJobRunningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class BatchJobRunningController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)
-    public BatchJobStatusModel getDetails(HttpServletRequest request) {
+    public BatchJobStatusEntity getDetails(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         String gid = request.getParameter("gid");
         String tid = request.getParameter("tid");

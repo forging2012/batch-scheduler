@@ -1,6 +1,6 @@
 package com.asofdate.platform.service;
 
-import com.asofdate.platform.model.DomainModel;
+import com.asofdate.platform.entity.DomainEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public interface DomainService {
     JSONObject findAll(String domainId);
 
-    List<DomainModel> getAll();
+    List<DomainEntity> getAll();
 
-    int update(DomainModel domainModel);
+    int update(DomainEntity domainEntity);
 
     String delete(JSONArray jsonArray);
 
-    int add(DomainModel domainModel);
+    int add(DomainEntity domainEntity);
 
-    DomainModel getDomainDetails(String domainId);
+    DomainEntity getDomainDetails(String domainId);
 }

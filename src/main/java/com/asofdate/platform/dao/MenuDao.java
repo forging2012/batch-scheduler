@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao;
 
-import com.asofdate.platform.model.MenuModel;
-import com.asofdate.platform.model.ThemeValueModel;
+import com.asofdate.platform.entity.MenuEntity;
+import com.asofdate.platform.entity.ThemeValueEntity;
 
 import java.util.List;
 
@@ -10,18 +10,18 @@ import java.util.List;
  */
 public interface MenuDao {
 
-    List<MenuModel> findAll();
+    List<MenuEntity> findAll();
 
-    MenuModel getDetails(String resId);
+    MenuEntity getDetails(String resId);
 
-    String add(ThemeValueModel themeValueModel);
+    String add(ThemeValueEntity themeValueEntity);
 
     String delete(String resId);
 
     String update(String resId, String resDesc, String resUpId);
 
-    ThemeValueModel getThemeDetails(String themeId, String resId);
+    ThemeValueEntity getThemeDetails(String themeId, String resId);
 
-    String updateTheme(ThemeValueModel themeValueModel);
+    String updateTheme(ThemeValueEntity themeValueEntity);
 
 }

@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.GroupTaskDao;
-import com.asofdate.dispatch.model.GroupTaskModel;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +27,7 @@ public class GroupTaskDaoImpl implements GroupTaskDao {
 
     @Override
     public List findAll(String domainId) {
-        RowMapper<GroupTaskModel> rowMapper = new BeanPropertyRowMapper<GroupTaskModel>(GroupTaskModel.class);
+        RowMapper<GroupTaskEntity> rowMapper = new BeanPropertyRowMapper<GroupTaskEntity>(GroupTaskEntity.class);
         List list = jdbcTemplate.query(SqlDefine.sys_rdbms_109, rowMapper, domainId);
         return list;
     }

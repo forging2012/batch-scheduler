@@ -1,12 +1,12 @@
 package com.asofdate.platform.service;
 
-import com.asofdate.platform.model.UserLoginModel;
+import com.asofdate.platform.entity.UserLoginEntity;
 
 /**
  * Created by hzwy23 on 2017/5/16.
  */
 public interface LoginService {
-    UserLoginModel loginValidator(String user_id, String password);
+    UserLoginEntity loginValidator(String user_id, String password);
 
-    UserLoginModel findByUserId(String userId);
+    UserLoginEntity findByUserId(String userId);
 }

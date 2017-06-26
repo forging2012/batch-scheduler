@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.OrgModel;
+import com.asofdate.platform.entity.OrgEntity;
 import com.asofdate.platform.service.OrgService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
@@ -43,8 +43,8 @@ public class OrgController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        OrgModel orgModel = parse(request);
-        int size = orgService.add(orgModel);
+        OrgEntity orgEntity = parse(request);
+        int size = orgService.add(orgEntity);
         if (size == 1) {
             return Hret.success(200, "success", null);
         }
@@ -54,8 +54,8 @@ public class OrgController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletResponse response, HttpServletRequest request) {
-        OrgModel orgModel = parse(request);
-        int size = orgService.update(orgModel);
+        OrgEntity orgEntity = parse(request);
+        int size = orgService.update(orgEntity);
         if (size == 1) {
             return Hret.success(200, "success", null);
         }
@@ -81,19 +81,19 @@ public class OrgController {
         }
     }
 
-    private OrgModel parse(HttpServletRequest request) {
-        OrgModel orgModel = new OrgModel();
+    private OrgEntity parse(HttpServletRequest request) {
+        OrgEntity orgEntity = new OrgEntity();
         String codeNumber = request.getParameter("Org_unit_id");
         String domainId = request.getParameter("Domain_id");
-        orgModel.setCode_number(codeNumber);
-        orgModel.setOrg_desc(request.getParameter("Org_unit_desc"));
-        orgModel.setDomain_id(domainId);
-        orgModel.setUp_org_id(request.getParameter("Up_org_id"));
+        orgEntity.setCode_number(codeNumber);
+        orgEntity.setOrg_desc(request.getParameter("Org_unit_desc"));
+        orgEntity.setDomain_id(domainId);
+        orgEntity.setUp_org_id(request.getParameter("Up_org_id"));
         String orgUnitId = JoinCode.join(domainId, codeNumber);
-        orgModel.setOrg_id(orgUnitId);
+        orgEntity.setOrg_id(orgUnitId);
         String userId = JwtService.getConnectUser(request).getString("UserId");
-        orgModel.setCreate_user(userId);
-        orgModel.setModify_user(userId);
-        return orgModel;
+        orgEntity.setCreate_user(userId);
+        orgEntity.setModify_user(userId);
+        return orgEntity;
     }
 }

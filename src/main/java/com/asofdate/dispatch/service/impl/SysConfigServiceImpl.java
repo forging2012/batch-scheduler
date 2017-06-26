@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.SysConfigDao;
-import com.asofdate.dispatch.model.SysConfigModel;
+import com.asofdate.dispatch.entity.SysConfigEntity;
 import com.asofdate.dispatch.service.SysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class SysConfigServiceImpl implements SysConfigService {
     private SysConfigDao sysConfigDao;
 
     @Override
-    public List<SysConfigModel> findAll(String domainId) {
+    public List<SysConfigEntity> findAll(String domainId) {
         return sysConfigDao.findAll(domainId);
     }
 

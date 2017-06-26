@@ -2,7 +2,7 @@ package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.GroupArgumentDao;
 import com.asofdate.dispatch.dao.GroupDefineDao;
-import com.asofdate.dispatch.model.GroupDefineModel;
+import com.asofdate.dispatch.entity.GroupDefineEntity;
 import com.asofdate.dispatch.service.GroupDefineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,22 +20,22 @@ public class GroupDefineServiceImpl implements GroupDefineService {
     private GroupArgumentDao groupArgumentDao;
 
     @Override
-    public List<GroupDefineModel> findAll(String domainId) {
+    public List<GroupDefineEntity> findAll(String domainId) {
         return groupDefineDao.findAll(domainId);
     }
 
     @Override
-    public int update(GroupDefineModel m) {
+    public int update(GroupDefineEntity m) {
         return groupDefineDao.update(m);
     }
 
     @Override
-    public String delete(List<GroupDefineModel> m) {
+    public String delete(List<GroupDefineEntity> m) {
         return groupDefineDao.delete(m);
     }
 
     @Override
-    public int add(GroupDefineModel m) {
+    public int add(GroupDefineEntity m) {
         return groupDefineDao.add(m);
     }
 

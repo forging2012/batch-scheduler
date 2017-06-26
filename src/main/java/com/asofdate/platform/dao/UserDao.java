@@ -1,6 +1,6 @@
 package com.asofdate.platform.dao;
 
-import com.asofdate.platform.model.UserModel;
+import com.asofdate.platform.entity.UserEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,15 +10,15 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/18.
  */
 public interface UserDao {
-    List<UserModel> findAll(String domainid);
+    List<UserEntity> findAll(String domainid);
 
-    List<UserModel> findAll(String domainId, String orgId, String statusCd);
+    List<UserEntity> findAll(String domainId, String orgId, String statusCd);
 
-    int add(UserModel userModel);
+    int add(UserEntity userEntity);
 
     int delete(JSONArray jsonArray);
 
-    int update(UserModel userModel);
+    int update(UserEntity userEntity);
 
     int changePassword(JSONObject jsonObject);
 

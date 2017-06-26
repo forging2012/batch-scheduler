@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.OrgDao;
-import com.asofdate.platform.model.OrgModel;
+import com.asofdate.platform.entity.OrgEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,16 +28,16 @@ public class OrgDaoImpl implements OrgDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<OrgModel> findAll(String domainId) {
-        RowMapper<OrgModel> rowMapper = new BeanPropertyRowMapper<>(OrgModel.class);
+    public List<OrgEntity> findAll(String domainId) {
+        RowMapper<OrgEntity> rowMapper = new BeanPropertyRowMapper<>(OrgEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_041, rowMapper, domainId);
     }
 
     @Override
-    public List<OrgModel> findSub(String domainId, String orgId) {
-        List<OrgModel> list = findAll(domainId);
-        List<OrgModel> ret = new ArrayList<OrgModel>();
-        for (OrgModel m : list) {
+    public List<OrgEntity> findSub(String domainId, String orgId) {
+        List<OrgEntity> list = findAll(domainId);
+        List<OrgEntity> ret = new ArrayList<OrgEntity>();
+        for (OrgEntity m : list) {
             if (orgId.equals(m.getOrg_id())) {
                 ret.add(m);
                 break;
@@ -48,15 +48,15 @@ public class OrgDaoImpl implements OrgDao {
     }
 
     @Override
-    public int add(OrgModel orgModel) {
+    public int add(OrgEntity orgEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_043,
-                orgModel.getCode_number(),
-                orgModel.getOrg_desc(),
-                orgModel.getUp_org_id(),
-                orgModel.getDomain_id(),
-                orgModel.getCreate_user(),
-                orgModel.getModify_user(),
-                orgModel.getOrg_id());
+                orgEntity.getCode_number(),
+                orgEntity.getOrg_desc(),
+                orgEntity.getUp_org_id(),
+                orgEntity.getDomain_id(),
+                orgEntity.getCreate_user(),
+                orgEntity.getModify_user(),
+                orgEntity.getOrg_id());
     }
 
     @Transactional
@@ -72,17 +72,17 @@ public class OrgDaoImpl implements OrgDao {
     }
 
     @Override
-    public int update(OrgModel orgModel) {
-        logger.debug("{},{},{},{}", orgModel.getOrg_desc(), orgModel.getUp_org_id(), orgModel.getModify_user(), orgModel.getOrg_id());
+    public int update(OrgEntity orgEntity) {
+        logger.debug("{},{},{},{}", orgEntity.getOrg_desc(), orgEntity.getUp_org_id(), orgEntity.getModify_user(), orgEntity.getOrg_id());
         return jdbcTemplate.update(SqlDefine.sys_rdbms_069,
-                orgModel.getOrg_desc(),
-                orgModel.getUp_org_id(),
-                orgModel.getModify_user(),
-                orgModel.getOrg_id());
+                orgEntity.getOrg_desc(),
+                orgEntity.getUp_org_id(),
+                orgEntity.getModify_user(),
+                orgEntity.getOrg_id());
     }
 
-    private void getSub(List<OrgModel> all, String orgId, List<OrgModel> ret) {
-        for (OrgModel a : all) {
+    private void getSub(List<OrgEntity> all, String orgId, List<OrgEntity> ret) {
+        for (OrgEntity a : all) {
             if (orgId.equals(a.getUp_org_id())) {
                 if (ret.contains(a)) {
                     continue;

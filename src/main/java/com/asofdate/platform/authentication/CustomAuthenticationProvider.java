@@ -1,6 +1,6 @@
 package com.asofdate.platform.authentication;
 
-import com.asofdate.platform.model.UserLoginModel;
+import com.asofdate.platform.entity.UserLoginEntity;
 import com.asofdate.platform.service.LoginService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -35,9 +35,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return new UsernamePasswordAuthenticationToken(name, "", new ArrayList<>());
         }
         String password = pd.toString();
-        UserLoginModel userLoginModel = loginService.loginValidator(name, password);
+        UserLoginEntity userLoginEntity = loginService.loginValidator(name, password);
         // 认证逻辑
-        if (userLoginModel.isFlag()) {
+        if (userLoginEntity.isFlag()) {
             // 这里设置权限和角色
             ArrayList<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
@@ -48,8 +48,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             Authentication auth = new UsernamePasswordAuthenticationToken(name, password, authorities);
             return auth;
         } else {
-            logger.info("登录失败,原因是:账号 {}: {}", userLoginModel.getUsername(), userLoginModel.getMessage());
-            throw new BadCredentialsException(JSONObject.wrap(userLoginModel).toString());
+            logger.info("登录失败,原因是:账号 {}: {}", userLoginEntity.getUsername(), userLoginEntity.getMessage());
+            throw new BadCredentialsException(JSONObject.wrap(userLoginEntity).toString());
         }
     }
 

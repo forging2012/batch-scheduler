@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
-import com.asofdate.platform.model.MenuModel;
-import com.asofdate.platform.model.ThemeValueModel;
+import com.asofdate.platform.entity.MenuEntity;
+import com.asofdate.platform.entity.ThemeValueEntity;
 import com.asofdate.platform.service.MenuService;
 import com.asofdate.utils.Hret;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class MenuController {
     private MenuService menuService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<MenuModel> findAll(HttpServletRequest request) {
+    public List<MenuEntity> findAll(HttpServletRequest request) {
         return menuService.findAll();
     }
 
@@ -43,7 +43,7 @@ public class MenuController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        ThemeValueModel menuModel = parse(request);
+        ThemeValueEntity menuModel = parse(request);
         String msg = menuService.add(menuModel);
         if ("success".equals(msg)) {
             return Hret.success(200, msg, null);
@@ -64,13 +64,13 @@ public class MenuController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)
-    public MenuModel getDetails(HttpServletResponse httpServletResponse, HttpServletRequest request) {
+    public MenuEntity getDetails(HttpServletResponse httpServletResponse, HttpServletRequest request) {
         String resId = request.getParameter("res_id");
         return menuService.getDetails(resId);
     }
 
     @RequestMapping(value = "/theme", method = RequestMethod.GET)
-    public ThemeValueModel getThemeDetails(HttpServletResponse response, HttpServletRequest request) {
+    public ThemeValueEntity getThemeDetails(HttpServletResponse response, HttpServletRequest request) {
         String resId = request.getParameter("res_id");
         String themeId = request.getParameter("theme_id");
         return menuService.getThemeDetails(themeId, resId);
@@ -78,8 +78,8 @@ public class MenuController {
 
     @RequestMapping(value = "/theme/config", method = RequestMethod.POST)
     public String updateTheme(HttpServletResponse response, HttpServletRequest request) {
-        ThemeValueModel themeValueModel = parse(request);
-        String msg = menuService.updateTheme(themeValueModel);
+        ThemeValueEntity themeValueEntity = parse(request);
+        String msg = menuService.updateTheme(themeValueEntity);
         if ("success".equals(msg)) {
             return Hret.success(200, msg, null);
         }
@@ -87,8 +87,8 @@ public class MenuController {
         return Hret.error(422, msg, null);
     }
 
-    private ThemeValueModel parse(HttpServletRequest request) {
-        ThemeValueModel menuModel = new ThemeValueModel();
+    private ThemeValueEntity parse(HttpServletRequest request) {
+        ThemeValueEntity menuModel = new ThemeValueEntity();
         String resId = request.getParameter("res_id");
         String resName = request.getParameter("res_name");
         String themeId = request.getParameter("theme_id");

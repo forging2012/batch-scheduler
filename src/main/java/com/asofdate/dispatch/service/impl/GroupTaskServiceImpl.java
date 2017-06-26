@@ -3,8 +3,8 @@ package com.asofdate.dispatch.service.impl;
 import com.asofdate.dispatch.dao.GroupArgumentDao;
 import com.asofdate.dispatch.dao.GroupTaskDao;
 import com.asofdate.dispatch.dao.TaskArgumentDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.GroupTaskModel;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.GroupTaskService;
 import org.json.JSONArray;
@@ -37,12 +37,12 @@ public class GroupTaskServiceImpl implements GroupTaskService {
     private GroupArgumentDao groupArgumentDao;
 
     @Override
-    public List<GroupTaskModel> findByBatchId(String domainId, String batchId) {
-        List<GroupTaskModel> list = groupTaskDao.findAll(domainId);
+    public List<GroupTaskEntity> findByBatchId(String domainId, String batchId) {
+        List<GroupTaskEntity> list = groupTaskDao.findAll(domainId);
 
-        List<BatchGroupModel> batchGroupModelList = batchGroupService.findByBatchId(domainId, batchId);
-        Map<String, BatchGroupModel> map = new HashMap<String, BatchGroupModel>();
-        for (BatchGroupModel m : batchGroupModelList) {
+        List<BatchGroupEntity> batchGroupEntityList = batchGroupService.findByBatchId(domainId, batchId);
+        Map<String, BatchGroupEntity> map = new HashMap<String, BatchGroupEntity>();
+        for (BatchGroupEntity m : batchGroupEntityList) {
             if (!map.containsKey(m.getGroupId())) {
                 map.put(m.getGroupId(), m);
             }

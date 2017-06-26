@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.RoleDao;
-import com.asofdate.platform.model.RoleModel;
+import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.JoinCode;
 import org.json.JSONArray;
@@ -30,36 +30,36 @@ public class RoleDaoImpl implements RoleDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<RoleModel> findAll(String domainId) {
-        RowMapper<RoleModel> rowMapper = new BeanPropertyRowMapper<>(RoleModel.class);
+    public List<RoleEntity> findAll(String domainId) {
+        RowMapper<RoleEntity> rowMapper = new BeanPropertyRowMapper<>(RoleEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_028, rowMapper, domainId);
     }
 
     @Override
-    public RoleModel getDetails(String roleId) {
-        RoleModel roleModel = new RoleModel();
+    public RoleEntity getDetails(String roleId) {
+        RoleEntity roleEntity = new RoleEntity();
         jdbcTemplate.query(SqlDefine.sys_rdbms_208, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet resultSet) throws SQLException {
-                roleModel.setDomain_id(resultSet.getString("domain_id"));
-                roleModel.setRole_id(resultSet.getString("role_id"));
-                roleModel.setCode_number(resultSet.getString("code_number"));
-                roleModel.setRole_name(resultSet.getString("role_name"));
-                roleModel.setDomain_desc(resultSet.getString("domain_desc"));
+                roleEntity.setDomain_id(resultSet.getString("domain_id"));
+                roleEntity.setRole_id(resultSet.getString("role_id"));
+                roleEntity.setCode_number(resultSet.getString("code_number"));
+                roleEntity.setRole_name(resultSet.getString("role_name"));
+                roleEntity.setDomain_desc(resultSet.getString("domain_desc"));
             }
         }, roleId);
-        return roleModel;
+        return roleEntity;
     }
 
     @Override
-    public List<RoleModel> getOther(String userId) {
-        RowMapper<RoleModel> rowMapper = new BeanPropertyRowMapper<>(RoleModel.class);
+    public List<RoleEntity> getOther(String userId) {
+        RowMapper<RoleEntity> rowMapper = new BeanPropertyRowMapper<>(RoleEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_095, rowMapper, userId);
     }
 
     @Override
-    public List<RoleModel> getOwner(String userId) {
-        RowMapper<RoleModel> rowMapper = new BeanPropertyRowMapper<>(RoleModel.class);
+    public List<RoleEntity> getOwner(String userId) {
+        RowMapper<RoleEntity> rowMapper = new BeanPropertyRowMapper<>(RoleEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_094, rowMapper, userId);
     }
 
@@ -108,15 +108,15 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public int add(RoleModel roleModel) {
+    public int add(RoleEntity roleEntity) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_026,
-                roleModel.getRole_id(),
-                roleModel.getRole_name(),
-                roleModel.getCreate_user(),
-                roleModel.getRole_status_code(),
-                roleModel.getDomain_id(),
-                roleModel.getModify_user(),
-                roleModel.getCode_number());
+                roleEntity.getRole_id(),
+                roleEntity.getRole_name(),
+                roleEntity.getCreate_user(),
+                roleEntity.getRole_status_code(),
+                roleEntity.getDomain_id(),
+                roleEntity.getModify_user(),
+                roleEntity.getCode_number());
     }
 
     @Override
@@ -131,16 +131,16 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public int update(RoleModel roleModel) {
+    public int update(RoleEntity roleEntity) {
         logger.debug("{},{},{},{}",
-                roleModel.getRole_name(),
-                roleModel.getRole_status_code(),
-                roleModel.getModify_user(),
-                roleModel.getRole_id());
+                roleEntity.getRole_name(),
+                roleEntity.getRole_status_code(),
+                roleEntity.getModify_user(),
+                roleEntity.getRole_id());
         return jdbcTemplate.update(SqlDefine.sys_rdbms_050,
-                roleModel.getRole_name(),
-                roleModel.getRole_status_code(),
-                roleModel.getModify_user(),
-                roleModel.getRole_id());
+                roleEntity.getRole_name(),
+                roleEntity.getRole_status_code(),
+                roleEntity.getModify_user(),
+                roleEntity.getRole_id());
     }
 }

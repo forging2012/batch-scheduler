@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.BatchGroupDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ public class BatchGroupServiceImpl implements BatchGroupService {
     private BatchGroupDao batchGroupDao;
 
     @Override
-    public List<BatchGroupModel> findByBatchId(String domainId, String batchId) {
-        List<BatchGroupModel> list = batchGroupDao.findAll(domainId);
+    public List<BatchGroupEntity> findByBatchId(String domainId, String batchId) {
+        List<BatchGroupEntity> list = batchGroupDao.findAll(domainId);
         for (int i = 0; i < list.size(); i++) {
             if (!batchId.equals(list.get(i).getBatchId())) {
                 list.remove(i);
@@ -30,7 +30,7 @@ public class BatchGroupServiceImpl implements BatchGroupService {
     }
 
     @Override
-    public List<BatchGroupModel> getGroup(String batchId) {
+    public List<BatchGroupEntity> getGroup(String batchId) {
         return batchGroupDao.getGroup(batchId);
     }
 
@@ -45,7 +45,7 @@ public class BatchGroupServiceImpl implements BatchGroupService {
     }
 
     @Override
-    public List<BatchGroupModel> getDependency(String batchid, String id) {
+    public List<BatchGroupEntity> getDependency(String batchid, String id) {
         return batchGroupDao.getDependency(batchid, id);
     }
 }

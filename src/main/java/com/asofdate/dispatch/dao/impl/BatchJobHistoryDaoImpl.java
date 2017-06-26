@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.BatchJobHistoryDao;
-import com.asofdate.dispatch.model.BatchJobHistoryModel;
+import com.asofdate.dispatch.entity.BatchJobHistoryEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,8 +20,8 @@ public class BatchJobHistoryDaoImpl implements BatchJobHistoryDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<BatchJobHistoryModel> findAll(String uuid, String gid) {
-        RowMapper<BatchJobHistoryModel> rowMapper = new BeanPropertyRowMapper<>(BatchJobHistoryModel.class);
+    public List<BatchJobHistoryEntity> findAll(String uuid, String gid) {
+        RowMapper<BatchJobHistoryEntity> rowMapper = new BeanPropertyRowMapper<>(BatchJobHistoryEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_200, rowMapper, uuid, gid);
     }
 }

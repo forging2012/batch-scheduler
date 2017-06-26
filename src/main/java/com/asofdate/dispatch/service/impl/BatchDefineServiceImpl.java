@@ -3,13 +3,20 @@ package com.asofdate.dispatch.service.impl;
 import com.asofdate.dispatch.dao.BatchArgumentDao;
 import com.asofdate.dispatch.dao.BatchDefineDao;
 import com.asofdate.dispatch.dao.BatchJobStatusDao;
-import com.asofdate.dispatch.model.BatchDefineModel;
+import com.asofdate.dispatch.dto.BatchArgumentDTO;
+import com.asofdate.dispatch.entity.BatchArgumentEntiry;
+import com.asofdate.dispatch.entity.BatchDefineEntity;
 import com.asofdate.dispatch.service.BatchDefineService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +24,7 @@ import java.util.List;
  */
 @Service
 public class BatchDefineServiceImpl implements BatchDefineService {
+    private final Logger logger = LoggerFactory.getLogger(BatchDefineServiceImpl.class);
     @Autowired
     private BatchDefineDao batchDefineDao;
 
@@ -27,28 +35,53 @@ public class BatchDefineServiceImpl implements BatchDefineService {
     private BatchJobStatusDao batchJobStatusDao;
 
     @Override
-    public List<BatchDefineModel> findAll(String domainId) {
+    public List<BatchDefineEntity> findAll(String domainId) {
         return batchDefineDao.findAll(domainId);
     }
 
     @Override
-    public List<BatchDefineModel> getRunning(String domainId) {
+    public List<BatchDefineEntity> getRunning(String domainId) {
         return batchDefineDao.getRunning(domainId);
     }
 
     @Override
-    public int add(BatchDefineModel m) {
-        return batchDefineDao.add(m);
+    public RetMsg addBatch(BatchDefineEntity vo) {
+        try {
+            int size = batchDefineDao.add(vo);
+            if (1 != size) {
+                return new RetMsg(SysStatus.ERROR_CODE, "新增批次失败，请联系管理员", size);
+            }
+            return new RetMsg(SysStatus.SUCCESS_CODE, "success", null);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), vo);
+        }
     }
 
     @Override
-    public String delete(List<BatchDefineModel> m) {
-        return batchDefineDao.delete(m);
+    public RetMsg deleteBatch(List<BatchDefineEntity> vo) {
+        try {
+            String msg = batchDefineDao.delete(vo);
+            if ("success".equals(msg)) {
+                return new RetMsg(SysStatus.SUCCESS_CODE, "success", null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE, "删除批次信息失败", vo);
+        } catch (Exception e) {
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), vo);
+        }
     }
 
     @Override
-    public int update(BatchDefineModel m) {
-        return batchDefineDao.update(m);
+    public RetMsg updateBatch(BatchDefineEntity m) {
+        try {
+            int size = batchDefineDao.update(m);
+            if (1 == size) {
+                return new RetMsg(SysStatus.SUCCESS_CODE, "success", null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE, "更新批次信息失败，请联系管理员", m);
+        } catch (Exception e) {
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), m);
+        }
     }
 
     @Override
@@ -57,13 +90,29 @@ public class BatchDefineServiceImpl implements BatchDefineService {
     }
 
     @Override
-    public int setStatus(String batchId, int status) {
-        return batchDefineDao.setStatus(batchId, status);
+    public RetMsg setStatus(String batchId, int status) {
+        try {
+            int size = batchDefineDao.setStatus(batchId, status);
+            if (1 == size) {
+                return new RetMsg(SysStatus.SUCCESS_CODE, "success", null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE, "设置批次状态信息失败，请联系管理员", batchId);
+        } catch (Exception e) {
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), batchId);
+        }
     }
 
     @Override
-    public int runBatchInit(String batchId) {
-        return batchDefineDao.runBatchInit(batchId);
+    public RetMsg runBatchInit(String batchId) {
+        try {
+            int size = batchDefineDao.runBatchInit(batchId);
+            if (1 == size) {
+                return new RetMsg(SysStatus.SUCCESS_CODE, "success", null);
+            }
+            return new RetMsg(SysStatus.ERROR_CODE, "批次初始化失败，批次无法启动", null);
+        } catch (Exception e) {
+            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), null);
+        }
     }
 
     @Override
@@ -76,15 +125,35 @@ public class BatchDefineServiceImpl implements BatchDefineService {
         return batchDefineDao.updateAsofdate(asofdate, batchId);
     }
 
-
     @Override
-    public JSONArray getBatchArg(String batchId) {
-        return batchArgumentDao.getBatchArg(batchId);
+    public List<BatchArgumentDTO> findBatchArgsById(String batchId) {
+        List<BatchArgumentEntiry> batchArgList = batchArgumentDao.findBatchArgsById(batchId);
+        String asOfDate = batchArgumentDao.getAsOfDate(batchId);
+        String flag;
+
+        List<BatchArgumentDTO> list = new ArrayList<>();
+
+        for (BatchArgumentEntiry batchArg : batchArgList) {
+            BatchArgumentDTO ret = new BatchArgumentDTO();
+            flag = batchArg.getBindAsOfDate();
+            if ("1".equals(flag)) {
+                batchArg.setArgValue(asOfDate);
+            }
+            ret.setCodeNumber(batchArg.getCodeNumber());
+            ret.setDomainId(batchArg.getDomainId());
+            ret.setArgId(batchArg.getArgId());
+            ret.setBatchId(batchId);
+            ret.setArgValue(batchArg.getArgValue());
+            ret.setArgDesc(batchArg.getArgDesc());
+            ret.setBindAsOfDate(flag);
+            list.add(ret);
+        }
+        return list;
     }
 
     @Override
     public int addBatchArg(JSONArray jsonArray) {
-        return batchArgumentDao.addBatchArg(jsonArray);
+        return batchArgumentDao.add(jsonArray);
     }
 
     @Override
@@ -92,6 +161,7 @@ public class BatchDefineServiceImpl implements BatchDefineService {
         int completedCnt = batchJobStatusDao.getCompletedCnt(batchId);
         int totalCnt = batchJobStatusDao.getTotalCnt(batchId);
         String asOfDate = batchDefineDao.getBatchAsOfDate(batchId);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("as_of_date", asOfDate);
         if (totalCnt == 0) {

@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.OrgDao;
-import com.asofdate.platform.model.OrgModel;
+import com.asofdate.platform.entity.OrgEntity;
 import com.asofdate.platform.service.OrgService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +18,18 @@ public class OrgServiceImpl implements OrgService {
     private OrgDao orgDao;
 
     @Override
-    public List<OrgModel> findAll(String domainId) {
+    public List<OrgEntity> findAll(String domainId) {
         return orgDao.findAll(domainId);
     }
 
     @Override
-    public List<OrgModel> findSub(String domainId, String orgId) {
+    public List<OrgEntity> findSub(String domainId, String orgId) {
         return orgDao.findSub(domainId, orgId);
     }
 
     @Override
-    public int add(OrgModel orgModel) {
-        return orgDao.add(orgModel);
+    public int add(OrgEntity orgEntity) {
+        return orgDao.add(orgEntity);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class OrgServiceImpl implements OrgService {
     }
 
     @Override
-    public int update(OrgModel orgModel) {
-        return orgDao.update(orgModel);
+    public int update(OrgEntity orgEntity) {
+        return orgDao.update(orgEntity);
     }
 }

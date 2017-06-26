@@ -1,7 +1,7 @@
 package com.asofdate.platform.service;
 
-import com.asofdate.platform.model.MenuModel;
-import com.asofdate.platform.model.ThemeValueModel;
+import com.asofdate.platform.entity.MenuEntity;
+import com.asofdate.platform.entity.ThemeValueEntity;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/18.
  */
 public interface MenuService {
-    List<MenuModel> findAll();
+    List<MenuEntity> findAll();
 
-    MenuModel getDetails(String resId);
+    MenuEntity getDetails(String resId);
 
     String update(String resId, String resDesc, String resUpId);
 
-    ThemeValueModel getThemeDetails(String themeId, String resId);
+    ThemeValueEntity getThemeDetails(String themeId, String resId);
 
-    String add(ThemeValueModel themeValueModel);
+    String add(ThemeValueEntity themeValueEntity);
 
     String delete(String resId);
 
-    String updateTheme(ThemeValueModel themeValueModel);
+    String updateTheme(ThemeValueEntity themeValueEntity);
 }

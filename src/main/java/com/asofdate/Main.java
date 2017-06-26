@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.RestController;
 
-@ComponentScan(basePackages = {"com.asofdate.utils", "com.asofdate.platform.dao.impl", "com.asofdate.platform.service.impl", "com.asofdate.platform.controller", "com.asofdate.platform.authentication", "com.asofdate.dispatch", "com.asofdate.dispatch.model"})
+@ComponentScan(basePackages = {"com.asofdate.utils", "com.asofdate.platform.dao.impl", "com.asofdate.platform.service.impl", "com.asofdate.platform.controller", "com.asofdate.platform.authentication", "com.asofdate.dispatch", "com.asofdate.dispatch.entity"})
 @SpringBootApplication
 @RestController
 @EnableAutoConfiguration

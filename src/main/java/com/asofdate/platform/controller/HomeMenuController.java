@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.HomeMenuModel;
+import com.asofdate.platform.entity.HomeMenuEntity;
 import com.asofdate.platform.service.HomeMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,7 +22,7 @@ public class HomeMenuController {
 
     @RequestMapping(value = "/v1/auth/main/menu")
     @ResponseBody
-    public List<HomeMenuModel> homeMenu(HttpServletRequest request) {
+    public List<HomeMenuEntity> homeMenu(HttpServletRequest request) {
         String TypeId = request.getParameter("TypeId");
         String Id = request.getParameter("Id");
 
@@ -31,7 +31,7 @@ public class HomeMenuController {
                 .getAuthentication((HttpServletRequest) request);
         String username = authentication.getName();
 
-        List<HomeMenuModel> homeMenusModel = homeMenuService.findAuthedMenus(username, TypeId, Id);
+        List<HomeMenuEntity> homeMenusModel = homeMenuService.findAuthedMenus(username, TypeId, Id);
         return homeMenusModel;
     }
 }

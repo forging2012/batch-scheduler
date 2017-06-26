@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.ShareDomainDao;
-import com.asofdate.platform.model.ShareDomainModel;
+import com.asofdate.platform.entity.ShareDomainEntity;
 import com.asofdate.platform.service.ShareDomainService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +18,18 @@ public class ShareDomainServiceImpl implements ShareDomainService {
     private ShareDomainDao shareDomainDao;
 
     @Override
-    public List<ShareDomainModel> findAll(String domainId) {
+    public List<ShareDomainEntity> findAll(String domainId) {
         return shareDomainDao.findAll(domainId);
     }
 
     @Override
-    public List<ShareDomainModel> unShareTarget(String domainId) {
+    public List<ShareDomainEntity> unShareTarget(String domainId) {
         return shareDomainDao.unShareTarget(domainId);
     }
 
     @Override
-    public int add(ShareDomainModel shareDomainModel) {
-        return shareDomainDao.add(shareDomainModel);
+    public int add(ShareDomainEntity shareDomainEntity) {
+        return shareDomainDao.add(shareDomainEntity);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ShareDomainServiceImpl implements ShareDomainService {
     }
 
     @Override
-    public int update(ShareDomainModel shareDomainModel) {
-        return shareDomainDao.update(shareDomainModel);
+    public int update(ShareDomainEntity shareDomainEntity) {
+        return shareDomainDao.update(shareDomainEntity);
     }
 }

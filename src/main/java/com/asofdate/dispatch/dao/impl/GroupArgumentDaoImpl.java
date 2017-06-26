@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.GroupArgumentDao;
-import com.asofdate.dispatch.model.GroupArgumentModel;
+import com.asofdate.dispatch.entity.GroupArgumentEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,9 +25,9 @@ public class GroupArgumentDaoImpl implements GroupArgumentDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<GroupArgumentModel> findAll(String domainId) {
-        RowMapper<GroupArgumentModel> rowMapper = new BeanPropertyRowMapper<>(GroupArgumentModel.class);
-        List<GroupArgumentModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_114, rowMapper, domainId);
+    public List<GroupArgumentEntity> findAll(String domainId) {
+        RowMapper<GroupArgumentEntity> rowMapper = new BeanPropertyRowMapper<>(GroupArgumentEntity.class);
+        List<GroupArgumentEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_114, rowMapper, domainId);
         return list;
     }
 

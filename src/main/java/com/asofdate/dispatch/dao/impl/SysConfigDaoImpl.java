@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.SysConfigDao;
-import com.asofdate.dispatch.model.SysConfigModel;
+import com.asofdate.dispatch.entity.SysConfigEntity;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.JoinCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ public class SysConfigDaoImpl implements SysConfigDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<SysConfigModel> findAll(String domainId) {
-        RowMapper<SysConfigModel> rowMapper = new BeanPropertyRowMapper<SysConfigModel>(SysConfigModel.class);
-        List<SysConfigModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_181, rowMapper);
-        List<SysConfigModel> list2 = jdbcTemplate.query(SqlDefine.sys_rdbms_187, rowMapper, domainId);
-        Map<String, SysConfigModel> map = new HashMap<>();
+    public List<SysConfigEntity> findAll(String domainId) {
+        RowMapper<SysConfigEntity> rowMapper = new BeanPropertyRowMapper<SysConfigEntity>(SysConfigEntity.class);
+        List<SysConfigEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_181, rowMapper);
+        List<SysConfigEntity> list2 = jdbcTemplate.query(SqlDefine.sys_rdbms_187, rowMapper, domainId);
+        Map<String, SysConfigEntity> map = new HashMap<>();
 
         for (int i = 0; i < list2.size(); i++) {
             map.put(list2.get(i).getConfigId(), list2.get(i));

@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.service;
 
-import com.asofdate.dispatch.model.SysConfigModel;
+import com.asofdate.dispatch.entity.SysConfigEntity;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/15.
  */
 public interface SysConfigService {
-    List<SysConfigModel> findAll(String domainId);
+    List<SysConfigEntity> findAll(String domainId);
 
     int setValue(String domainId, String configId, String configValue);
 

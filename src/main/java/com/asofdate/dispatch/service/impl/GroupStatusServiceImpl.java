@@ -1,12 +1,12 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.BatchGroupStatusDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.GroupDependencyModel;
-import com.asofdate.dispatch.model.GroupStatus;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
+import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.GroupDependencyService;
 import com.asofdate.dispatch.service.GroupStatusService;
+import com.asofdate.dispatch.utils.GroupStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class GroupStatusServiceImpl implements GroupStatusService {
     private String domainId;
     private String batchId;
 
-    private List<BatchGroupModel> groupList;
+    private List<BatchGroupEntity> groupList;
     /*
     * 批次中任务组的状态管理
     * key : 表示批次中的任务组
@@ -55,7 +55,7 @@ public class GroupStatusServiceImpl implements GroupStatusService {
         /*
         * 初始化全部任务组
         * */
-        for (BatchGroupModel m : this.groupList) {
+        for (BatchGroupEntity m : this.groupList) {
             // 0 表示初始化
             groupMap.put(m.getUuid(), GroupStatus.Gid_STATUS_INIT);
         }
@@ -77,8 +77,8 @@ public class GroupStatusServiceImpl implements GroupStatusService {
     *     value: 是任务组的详细信息,包括任务组编码,所属域等等
     * */
     public Map getRunnableGroups() {
-        Map<String, BatchGroupModel> map = new HashMap<String, BatchGroupModel>();
-        for (BatchGroupModel m : groupList) {
+        Map<String, BatchGroupEntity> map = new HashMap<String, BatchGroupEntity>();
+        for (BatchGroupEntity m : groupList) {
             map.remove(m.getUuid());
             /*
             * 如果任务组状态不是初始化值
@@ -138,11 +138,11 @@ public class GroupStatusServiceImpl implements GroupStatusService {
    * @param String id 表示任务组的id
    * */
     public boolean isGroupRunable(String gid) {
-        Set<GroupDependencyModel> groupDependencyModels = groupDependencyService.getGroupDependency(gid);
-        if (groupDependencyModels == null) {
+        Set<GroupDependencyEntity> groupDependencyEntities = groupDependencyService.getGroupDependency(gid);
+        if (groupDependencyEntities == null) {
             return true;
         }
-        for (GroupDependencyModel gp : groupDependencyModels) {
+        for (GroupDependencyEntity gp : groupDependencyEntities) {
             int statusCd = getGroupStatus(gp.getUpId());
             if (GroupStatus.Gid_STATUS_COMPLETED == statusCd) {
                 continue;

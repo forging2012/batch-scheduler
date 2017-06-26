@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.TaskDefineDao;
-import com.asofdate.dispatch.model.TaskDefineModel;
+import com.asofdate.dispatch.entity.TaskDefineEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -21,13 +21,13 @@ public class TaskDefineDaoImpl implements TaskDefineDao {
 
     @Override
     public List findAll(String domainId) {
-        RowMapper<TaskDefineModel> rowMapper = new BeanPropertyRowMapper<TaskDefineModel>(TaskDefineModel.class);
-        List<TaskDefineModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_111, rowMapper, domainId);
+        RowMapper<TaskDefineEntity> rowMapper = new BeanPropertyRowMapper<TaskDefineEntity>(TaskDefineEntity.class);
+        List<TaskDefineEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_111, rowMapper, domainId);
         return list;
     }
 
     @Override
-    public int add(TaskDefineModel m) {
+    public int add(TaskDefineEntity m) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_125,
                 m.getTaskId(),
                 m.getCodeNumber(),
@@ -40,8 +40,8 @@ public class TaskDefineDaoImpl implements TaskDefineDao {
     }
 
     @Override
-    public String delete(List<TaskDefineModel> m) {
-        for (TaskDefineModel l : m) {
+    public String delete(List<TaskDefineEntity> m) {
+        for (TaskDefineEntity l : m) {
             if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_127, l.getTaskId(), l.getDomainId())) {
                 return "删除[" + l.getCodeNumber() + "]失败";
             }
@@ -50,7 +50,7 @@ public class TaskDefineDaoImpl implements TaskDefineDao {
     }
 
     @Override
-    public int update(TaskDefineModel m) {
+    public int update(TaskDefineEntity m) {
         return jdbcTemplate.update(SqlDefine.sys_rdbms_126,
                 m.getTaskDesc(),
                 m.getTaskType(),

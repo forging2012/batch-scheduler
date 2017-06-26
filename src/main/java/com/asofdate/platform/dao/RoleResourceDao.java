@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao;
 
-import com.asofdate.platform.model.ResourceModel;
-import com.asofdate.platform.model.RoleResourceModel;
+import com.asofdate.platform.entity.ResourceEntity;
+import com.asofdate.platform.entity.RoleResourceEntity;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/20.
  */
 public interface RoleResourceDao {
-    List<RoleResourceModel> findAll(String roleId);
+    List<RoleResourceEntity> findAll(String roleId);
 
-    List<ResourceModel> getOther(String roleId);
+    List<ResourceEntity> getOther(String roleId);
 
     int revoke(String roleId, String resId);
 

@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.BatchGroupStatusModel;
+import com.asofdate.dispatch.entity.BatchGroupStatusEntity;
 import com.asofdate.dispatch.service.BatchGroupRunningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ public class BatchGroupRunningController {
     private BatchGroupRunningService batchGroupRunningService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<BatchGroupStatusModel> findAll(HttpServletRequest request) {
+    public List<BatchGroupStatusEntity> findAll(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         return batchGroupRunningService.findAll(batchId);
     }
@@ -33,7 +33,7 @@ public class BatchGroupRunningController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)
-    public BatchGroupStatusModel getDetails(HttpServletRequest request) {
+    public BatchGroupStatusEntity getDetails(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         String gid = request.getParameter("gid");
         return batchGroupRunningService.getDetails(batchId, gid);

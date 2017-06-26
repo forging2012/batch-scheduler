@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.UserDetailsModel;
+import com.asofdate.platform.entity.UserDetailsEntity;
 import com.asofdate.platform.service.UserDetailsService;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.CryptoAES;
@@ -105,12 +105,12 @@ public class ThemeController {
 
     @RequestMapping(value = "/v1/auth/user/query", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public UserDetailsModel getUserDetailsInfo(HttpServletRequest request) {
+    public UserDetailsEntity getUserDetailsInfo(HttpServletRequest request) {
         Authentication authentication = JwtService
                 .getAuthentication((HttpServletRequest) request);
         String username = authentication.getName();
         logger.info("check user details info. user id is : " + username);
-        UserDetailsModel userDetailsModel = userDetailsService.findById(username);
-        return userDetailsModel;
+        UserDetailsEntity userDetailsEntity = userDetailsService.findById(username);
+        return userDetailsEntity;
     }
 }

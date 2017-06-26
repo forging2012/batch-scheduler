@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.ArgumentDefineDao;
-import com.asofdate.dispatch.model.ArgumentDefineModel;
+import com.asofdate.dispatch.entity.ArgumentDefineEntity;
 import com.asofdate.sql.SqlDefine;
 import com.asofdate.utils.JoinCode;
 import org.slf4j.Logger;
@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Created by hzwy23 on 2017/5/24.
+ *
+ * @author hzwy23
  */
 @Repository
 public class ArgumentDefineDaoImpl implements ArgumentDefineDao {
@@ -24,20 +26,15 @@ public class ArgumentDefineDaoImpl implements ArgumentDefineDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /*
-    * 查询所有参数
-    * @param domainId 所属域编码
-    * 返回参数定义表中,所以参数,如果参数类型是固定参数,则返回固定参数的值
-    * */
     @Override
     public List findAll(String domainId) {
-        RowMapper<ArgumentDefineModel> rowMapper = new BeanPropertyRowMapper<ArgumentDefineModel>(ArgumentDefineModel.class);
-        List<ArgumentDefineModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_104, rowMapper, domainId);
+        RowMapper<ArgumentDefineEntity> rowMapper = new BeanPropertyRowMapper<ArgumentDefineEntity>(ArgumentDefineEntity.class);
+        List<ArgumentDefineEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_104, rowMapper, domainId);
         return list;
     }
 
     @Override
-    public int add(ArgumentDefineModel m) {
+    public int add(ArgumentDefineEntity m) {
         String id = JoinCode.join(m.getDomainId(), m.getArgId());
         return jdbcTemplate.update(SqlDefine.sys_rdbms_119,
                 id,
@@ -53,9 +50,9 @@ public class ArgumentDefineDaoImpl implements ArgumentDefineDao {
 
     @Transactional
     @Override
-    public String delete(List<ArgumentDefineModel> m) {
+    public String delete(List<ArgumentDefineEntity> m) {
         try {
-            for (ArgumentDefineModel l : m) {
+            for (ArgumentDefineEntity l : m) {
                 jdbcTemplate.update(SqlDefine.sys_rdbms_120, l.getArgId(), l.getDomainId());
             }
             return "success";
@@ -65,7 +62,7 @@ public class ArgumentDefineDaoImpl implements ArgumentDefineDao {
     }
 
     @Override
-    public int update(ArgumentDefineModel m) {
+    public int update(ArgumentDefineEntity m) {
         String id = JoinCode.join(m.getDomainId(), m.getArgId());
         return jdbcTemplate.update(SqlDefine.sys_rdbms_121,
                 m.getModifyUser(),

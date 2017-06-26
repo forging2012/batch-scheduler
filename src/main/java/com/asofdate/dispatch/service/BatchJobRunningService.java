@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.service;
 
-import com.asofdate.dispatch.model.BatchJobStatusModel;
+import com.asofdate.dispatch.entity.BatchJobStatusEntity;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/17.
  */
 public interface BatchJobRunningService {
-    List<BatchJobStatusModel> findAll(String batchId, String gid);
+    List<BatchJobStatusEntity> findAll(String batchId, String gid);
 
-    BatchJobStatusModel getDetails(String batchId, String gid, String tid);
+    BatchJobStatusEntity getDetails(String batchId, String gid, String tid);
 }

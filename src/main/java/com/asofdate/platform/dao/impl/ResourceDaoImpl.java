@@ -1,7 +1,7 @@
 package com.asofdate.platform.dao.impl;
 
 import com.asofdate.platform.dao.ResourceDao;
-import com.asofdate.platform.model.ResourceModel;
+import com.asofdate.platform.entity.ResourceEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -22,21 +22,21 @@ public class ResourceDaoImpl implements ResourceDao {
 
     @Override
     public List findAll() {
-        RowMapper<ResourceModel> rowMapper = new BeanPropertyRowMapper<ResourceModel>(ResourceModel.class);
+        RowMapper<ResourceEntity> rowMapper = new BeanPropertyRowMapper<ResourceEntity>(ResourceEntity.class);
         List list = jdbcTemplate.query(SqlDefine.sys_rdbms_071, rowMapper);
         return list;
     }
 
     @Override
     public List findSubByUpId(String resUpId) {
-        List<ResourceModel> list = findAll();
-        List<ResourceModel> ret = new ArrayList<>();
+        List<ResourceEntity> list = findAll();
+        List<ResourceEntity> ret = new ArrayList<>();
         dfs(list, resUpId, ret);
         return ret;
     }
 
-    private void dfs(List<ResourceModel> all, String resUpId, List<ResourceModel> ret) {
-        for (ResourceModel m : all) {
+    private void dfs(List<ResourceEntity> all, String resUpId, List<ResourceEntity> ret) {
+        for (ResourceEntity m : all) {
             String upId = m.getRes_up_id();
             if (upId != null) {
                 if (upId.equals(resUpId)) {

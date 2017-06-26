@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.BatchJobHistoryDao;
-import com.asofdate.dispatch.model.BatchJobHistoryModel;
+import com.asofdate.dispatch.entity.BatchJobHistoryEntity;
 import com.asofdate.dispatch.service.BatchJobHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class BatchJobHistoryServiceImpl implements BatchJobHistoryService {
     private BatchJobHistoryDao batchJobHistoryDao;
 
     @Override
-    public List<BatchJobHistoryModel> findAll(String id, String gid) {
+    public List<BatchJobHistoryEntity> findAll(String id, String gid) {
         return batchJobHistoryDao.findAll(id, gid);
     }
 }

@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.GroupDefineModel;
-import com.asofdate.dispatch.model.GroupTaskModel;
+import com.asofdate.dispatch.entity.GroupDefineEntity;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
 import com.asofdate.dispatch.service.GroupDefineService;
 import com.asofdate.dispatch.service.GroupTaskService;
 import com.asofdate.dispatch.service.TaskDependencyService;
@@ -40,7 +40,7 @@ public class GroupDefineController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<GroupDefineModel> getAll(HttpServletRequest request) {
+    public List<GroupDefineEntity> getAll(HttpServletRequest request) {
         String domainID = JwtService.getConnectUser(request).get("DomainId").toString();
         return groupDefineService.findAll(domainID);
     }
@@ -63,14 +63,14 @@ public class GroupDefineController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String delete(HttpServletRequest request) {
-        List<GroupDefineModel> args = new ArrayList<>();
+        List<GroupDefineEntity> args = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            GroupDefineModel groupDefineModel = new GroupDefineModel();
-            groupDefineModel.setGroupId(jsonObject.getString("group_id"));
-            groupDefineModel.setDomainId(jsonObject.getString("domain_id"));
-            args.add(groupDefineModel);
+            GroupDefineEntity groupDefineEntity = new GroupDefineEntity();
+            groupDefineEntity.setGroupId(jsonObject.getString("group_id"));
+            groupDefineEntity.setDomainId(jsonObject.getString("domain_id"));
+            args.add(groupDefineEntity);
         }
         String msg = groupDefineService.delete(args);
         if ("success".equals(msg)) {
@@ -101,7 +101,7 @@ public class GroupDefineController {
 
     @RequestMapping(value = "/task/dependency", method = RequestMethod.GET)
     @ResponseBody
-    public List<GroupTaskModel> getTaskDependency(HttpServletRequest request) {
+    public List<GroupTaskEntity> getTaskDependency(HttpServletRequest request) {
         String id = request.getParameter("id");
         return taskDependencyService.getTaskDependency(id);
     }
@@ -114,7 +114,7 @@ public class GroupDefineController {
     * */
     @RequestMapping(value = "/group/task/current", method = RequestMethod.GET)
     @ResponseBody
-    public List<GroupTaskModel> getGroupTasks(HttpServletRequest request) {
+    public List<GroupTaskEntity> getGroupTasks(HttpServletRequest request) {
         String groupId = request.getParameter("group_id");
         String id = request.getParameter("id");
         logger.debug("group_id is ：{},id is:{}", groupId, id);
@@ -235,16 +235,16 @@ public class GroupDefineController {
         return Hret.success(200, "success", JSONObject.NULL);
     }
 
-    private GroupDefineModel parse(HttpServletRequest request) {
+    private GroupDefineEntity parse(HttpServletRequest request) {
         String userId = JwtService.getConnectUser(request).get("UserId").toString();
-        GroupDefineModel groupDefineModel = new GroupDefineModel();
+        GroupDefineEntity groupDefineEntity = new GroupDefineEntity();
         String groupId = JoinCode.join(request.getParameter("domain_id"), request.getParameter("group_id"));
-        groupDefineModel.setGroupId(groupId);
-        groupDefineModel.setCodeNumber(request.getParameter("group_id"));
-        groupDefineModel.setCreateUser(userId);
-        groupDefineModel.setModifyUser(userId);
-        groupDefineModel.setDomainId(request.getParameter("domain_id"));
-        groupDefineModel.setGroupDesc(request.getParameter("group_desc"));
-        return groupDefineModel;
+        groupDefineEntity.setGroupId(groupId);
+        groupDefineEntity.setCodeNumber(request.getParameter("group_id"));
+        groupDefineEntity.setCreateUser(userId);
+        groupDefineEntity.setModifyUser(userId);
+        groupDefineEntity.setDomainId(request.getParameter("domain_id"));
+        groupDefineEntity.setGroupDesc(request.getParameter("group_desc"));
+        return groupDefineEntity;
     }
 }

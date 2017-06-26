@@ -1,7 +1,7 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.BatchGroupRunningDao;
-import com.asofdate.dispatch.model.BatchGroupStatusModel;
+import com.asofdate.dispatch.entity.BatchGroupStatusEntity;
 import com.asofdate.sql.SqlDefine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,10 +20,10 @@ public class BatchGroupRunningDaoImpl implements BatchGroupRunningDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<BatchGroupStatusModel> findAll(String uuid) {
-        RowMapper<BatchGroupStatusModel> rowMapper = new BeanPropertyRowMapper<>(BatchGroupStatusModel.class);
-        List<BatchGroupStatusModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_201, rowMapper, uuid);
-        for (BatchGroupStatusModel bh : list) {
+    public List<BatchGroupStatusEntity> findAll(String uuid) {
+        RowMapper<BatchGroupStatusEntity> rowMapper = new BeanPropertyRowMapper<>(BatchGroupStatusEntity.class);
+        List<BatchGroupStatusEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_201, rowMapper, uuid);
+        for (BatchGroupStatusEntity bh : list) {
 
             Integer totalCnt = getTotalJobs(uuid, bh.getGid());
 
@@ -37,9 +37,9 @@ public class BatchGroupRunningDaoImpl implements BatchGroupRunningDao {
     }
 
     @Override
-    public BatchGroupStatusModel getDetails(String batchId, String gid) {
-        RowMapper<BatchGroupStatusModel> rowMapper = new BeanPropertyRowMapper<>(BatchGroupStatusModel.class);
-        BatchGroupStatusModel batchGroupStatusModel = jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_205, rowMapper, batchId, gid);
+    public BatchGroupStatusEntity getDetails(String batchId, String gid) {
+        RowMapper<BatchGroupStatusEntity> rowMapper = new BeanPropertyRowMapper<>(BatchGroupStatusEntity.class);
+        BatchGroupStatusEntity batchGroupStatusEntity = jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_205, rowMapper, batchId, gid);
 
         Integer totalCnt = getTotalJobs(batchId, gid);
 
@@ -50,19 +50,19 @@ public class BatchGroupRunningDaoImpl implements BatchGroupRunningDao {
         if (totalCnt != 0) {
             ratio = 100 * completeCnt / totalCnt;
         } else {
-            String statusCd = batchGroupStatusModel.getStatus();
+            String statusCd = batchGroupStatusEntity.getStatus();
             if (statusCd.equals("0") || statusCd.equals("1")) {
                 ratio = 0;
             }
         }
 
-        batchGroupStatusModel.setTotalJobsCnt(totalCnt);
+        batchGroupStatusEntity.setTotalJobsCnt(totalCnt);
 
-        batchGroupStatusModel.setCompleteJobsCnt(completeCnt);
+        batchGroupStatusEntity.setCompleteJobsCnt(completeCnt);
 
-        batchGroupStatusModel.setRatio(ratio);
+        batchGroupStatusEntity.setRatio(ratio);
 
-        return batchGroupStatusModel;
+        return batchGroupStatusEntity;
     }
 
     @Override

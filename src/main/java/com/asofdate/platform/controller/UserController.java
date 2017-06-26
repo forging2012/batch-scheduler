@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.UserModel;
+import com.asofdate.platform.entity.UserEntity;
 import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.UserService;
 import com.asofdate.utils.Hret;
@@ -29,7 +29,7 @@ public class UserController {
     private AuthService authService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<UserModel> findAll(HttpServletRequest request) {
+    public List<UserEntity> findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
             domainId = JwtService.getConnectUser(request).getString("DomainId");
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/search")
-    public List<UserModel> search(HttpServletRequest request) {
+    public List<UserEntity> search(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         String orgId = request.getParameter("org_id");
         String statusCd = request.getParameter("status_id");
@@ -47,8 +47,8 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletResponse response, HttpServletRequest request) {
-        UserModel userModel = parse(request);
-        int size = userService.update(userModel);
+        UserEntity userEntity = parse(request);
+        int size = userService.update(userEntity);
         if (size == 1) {
             return Hret.success(200, "success", null);
         }
@@ -102,7 +102,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        UserModel args = parse(request);
+        UserEntity args = parse(request);
         if (args == null) {
             return Hret.error(422, "参数解析失败,请按照要求填写表单", null);
         }
@@ -122,8 +122,8 @@ public class UserController {
         return Hret.success(200, "success", null);
     }
 
-    private UserModel parse(HttpServletRequest request) {
-        UserModel userModel = new UserModel();
+    private UserEntity parse(HttpServletRequest request) {
+        UserEntity userEntity = new UserEntity();
         String userId = request.getParameter("userId");
         String userDesc = request.getParameter("userDesc");
         String userPasswd = request.getParameter("userPasswd");
@@ -135,18 +135,18 @@ public class UserController {
         String userStatus = request.getParameter("userStatus");
         String crateUserId = JwtService.getConnectUser(request).getString("UserId");
 
-        userModel.setUser_id(userId);
-        userModel.setUser_name(userDesc);
-        userModel.setUser_passwd(userPasswd);
-        userModel.setUser_passwd_confirm(userPasswdConfirm);
-        userModel.setUser_email(userEmail);
-        userModel.setUser_phone(userPhone);
-        userModel.setOrg_unit_id(userOrgUnitId);
-        userModel.setUser_status(userStatus);
-        userModel.setDomain_id(domainId);
-        userModel.setCreate_user(crateUserId);
-        userModel.setModify_user(crateUserId);
+        userEntity.setUser_id(userId);
+        userEntity.setUser_name(userDesc);
+        userEntity.setUser_passwd(userPasswd);
+        userEntity.setUser_passwd_confirm(userPasswdConfirm);
+        userEntity.setUser_email(userEmail);
+        userEntity.setUser_phone(userPhone);
+        userEntity.setOrg_unit_id(userOrgUnitId);
+        userEntity.setUser_status(userStatus);
+        userEntity.setDomain_id(domainId);
+        userEntity.setCreate_user(crateUserId);
+        userEntity.setModify_user(crateUserId);
 
-        return userModel;
+        return userEntity;
     }
 }

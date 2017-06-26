@@ -1,6 +1,6 @@
 package com.asofdate.platform.service;
 
-import com.asofdate.platform.model.RoleModel;
+import com.asofdate.platform.entity.RoleEntity;
 import org.json.JSONArray;
 
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.List;
  * Created by hzwy23 on 2017/6/18.
  */
 public interface RoleService {
-    List<RoleModel> findAll(String domainId);
+    List<RoleEntity> findAll(String domainId);
 
-    List<RoleModel> getOther(String userId);
+    List<RoleEntity> getOther(String userId);
 
-    List<RoleModel> getOwner(String userId);
+    List<RoleEntity> getOwner(String userId);
 
-    RoleModel getDetails(String roleId);
+    RoleEntity getDetails(String roleId);
 
     int auth(JSONArray jsonArray, String modifyUserId);
 
@@ -23,9 +23,9 @@ public interface RoleService {
 
     int batchAuth(JSONArray jsonArray, String modifyUserId);
 
-    int add(RoleModel roleModel);
+    int add(RoleEntity roleEntity);
 
     int delete(JSONArray jsonArray);
 
-    int update(RoleModel roleModel);
+    int update(RoleEntity roleEntity);
 }

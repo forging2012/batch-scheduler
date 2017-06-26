@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
-import com.asofdate.platform.model.RoleModel;
+import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.platform.service.RoleService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
@@ -94,7 +94,7 @@ public class RoleController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<RoleModel> findAll(HttpServletRequest request) {
+    public List<RoleEntity> findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
             domainId = JwtService.getConnectUser(request).getString("DomainId");
@@ -104,8 +104,8 @@ public class RoleController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
-        RoleModel roleModel = parse(request);
-        int size = roleService.add(roleModel);
+        RoleEntity roleEntity = parse(request);
+        int size = roleService.add(roleEntity);
         if (1 == size) {
             return Hret.success(200, "success", null);
         }
@@ -115,8 +115,8 @@ public class RoleController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletRequest request, HttpServletResponse response) {
-        RoleModel roleModel = parse(request);
-        int size = roleService.update(roleModel);
+        RoleEntity roleEntity = parse(request);
+        int size = roleService.update(roleEntity);
         if (1 == size) {
             return Hret.success(200, "success", null);
         }
@@ -136,20 +136,20 @@ public class RoleController {
         return Hret.error(421, "删除角色信息失败,角色已经被使用,请先解除引用关系", null);
     }
 
-    private RoleModel parse(HttpServletRequest request) {
-        RoleModel roleModel = new RoleModel();
+    private RoleEntity parse(HttpServletRequest request) {
+        RoleEntity roleEntity = new RoleEntity();
         String codeNumber = request.getParameter("role_id");
         String domainId = request.getParameter("domain_id");
-        roleModel.setCode_number(codeNumber);
-        roleModel.setRole_name(request.getParameter("role_name"));
-        roleModel.setRole_status_code(request.getParameter("role_status"));
-        roleModel.setDomain_id(domainId);
+        roleEntity.setCode_number(codeNumber);
+        roleEntity.setRole_name(request.getParameter("role_name"));
+        roleEntity.setRole_status_code(request.getParameter("role_status"));
+        roleEntity.setDomain_id(domainId);
         String userId = JwtService.getConnectUser(request).getString("UserId");
-        roleModel.setCreate_user(userId);
-        roleModel.setModify_user(userId);
+        roleEntity.setCreate_user(userId);
+        roleEntity.setModify_user(userId);
         String roleId = JoinCode.join(domainId, codeNumber);
-        roleModel.setRole_id(roleId);
+        roleEntity.setRole_id(roleId);
 
-        return roleModel;
+        return roleEntity;
     }
 }

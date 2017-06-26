@@ -1,6 +1,6 @@
 package com.asofdate.dispatch.dao;
 
-import com.asofdate.dispatch.model.GroupDefineModel;
+import com.asofdate.dispatch.entity.GroupDefineEntity;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import java.util.List;
 public interface GroupDefineDao {
     List findAll(String domainId);
 
-    int update(GroupDefineModel m);
+    int update(GroupDefineEntity m);
 
-    String delete(List<GroupDefineModel> m);
+    String delete(List<GroupDefineEntity> m);
 
-    int add(GroupDefineModel m);
+    int add(GroupDefineEntity m);
 }

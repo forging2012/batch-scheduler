@@ -1,8 +1,8 @@
 package com.asofdate.dispatch.dao.impl;
 
 import com.asofdate.dispatch.dao.BatchGroupDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.GroupDependencyModel;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
+import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,14 +28,14 @@ public class BatchGroupDaoImpl implements BatchGroupDao {
 
     @Override
     public List findAll(String domainId) {
-        RowMapper<BatchGroupModel> rowMapper = new BeanPropertyRowMapper<>(BatchGroupModel.class);
-        List<BatchGroupModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_106, rowMapper, domainId);
+        RowMapper<BatchGroupEntity> rowMapper = new BeanPropertyRowMapper<>(BatchGroupEntity.class);
+        List<BatchGroupEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_106, rowMapper, domainId);
         return list;
     }
 
     @Override
-    public List<BatchGroupModel> getGroup(String batchId) {
-        RowMapper<BatchGroupModel> rowMapper = new BeanPropertyRowMapper<>(BatchGroupModel.class);
+    public List<BatchGroupEntity> getGroup(String batchId) {
+        RowMapper<BatchGroupEntity> rowMapper = new BeanPropertyRowMapper<>(BatchGroupEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_137, rowMapper, batchId);
     }
 
@@ -70,8 +70,8 @@ public class BatchGroupDaoImpl implements BatchGroupDao {
     }
 
     @Override
-    public List<BatchGroupModel> getDependency(String batchid, String id) {
-        List<BatchGroupModel> list = getGroup(batchid);
+    public List<BatchGroupEntity> getDependency(String batchid, String id) {
+        List<BatchGroupEntity> list = getGroup(batchid);
         Set<String> set = getChildren(batchid, id);
 
         for (int i = 0; i < list.size(); i++) {
@@ -85,26 +85,26 @@ public class BatchGroupDaoImpl implements BatchGroupDao {
     }
 
     private Set<String> getChildren(String batchId, String id) {
-        RowMapper<GroupDependencyModel> rowMapper = new BeanPropertyRowMapper<>(GroupDependencyModel.class);
-        List<GroupDependencyModel> list = jdbcTemplate.query(SqlDefine.sys_rdbms_073, rowMapper, batchId);
+        RowMapper<GroupDependencyEntity> rowMapper = new BeanPropertyRowMapper<>(GroupDependencyEntity.class);
+        List<GroupDependencyEntity> list = jdbcTemplate.query(SqlDefine.sys_rdbms_073, rowMapper, batchId);
 
         Set<String> set = new HashSet<>();
         children(list, id, set);
         set.add(id);
 
-        for (BatchGroupModel m : getOwner(id)) {
+        for (BatchGroupEntity m : getOwner(id)) {
             set.add(m.getUpId());
         }
         return set;
     }
 
-    private List<BatchGroupModel> getOwner(String id) {
-        RowMapper<BatchGroupModel> rowMapper = new BeanPropertyRowMapper<>(BatchGroupModel.class);
+    private List<BatchGroupEntity> getOwner(String id) {
+        RowMapper<BatchGroupEntity> rowMapper = new BeanPropertyRowMapper<>(BatchGroupEntity.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_138, rowMapper, id);
     }
 
-    private void children(List<GroupDependencyModel> all, String id, Set<String> set) {
-        for (GroupDependencyModel m : all) {
+    private void children(List<GroupDependencyEntity> all, String id, Set<String> set) {
+        for (GroupDependencyEntity m : all) {
             String upId = m.getUpId();
             if (upId == null || set.contains(m.getId())) {
                 continue;

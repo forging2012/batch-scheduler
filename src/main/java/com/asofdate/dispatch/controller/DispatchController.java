@@ -1,13 +1,15 @@
 package com.asofdate.dispatch.controller;
 
-import com.asofdate.dispatch.model.BatchStatus;
+import com.asofdate.dispatch.core.JobScheduler;
+import com.asofdate.dispatch.core.QuartzConfiguration;
 import com.asofdate.dispatch.service.ArgumentService;
 import com.asofdate.dispatch.service.BatchDefineService;
 import com.asofdate.dispatch.service.GroupStatusService;
 import com.asofdate.dispatch.service.TaskStatusService;
-import com.asofdate.dispatch.support.JobScheduler;
-import com.asofdate.dispatch.support.utils.QuartzConfiguration;
+import com.asofdate.dispatch.utils.BatchStatus;
 import com.asofdate.utils.Hret;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,11 +63,11 @@ public class DispatchController {
             return Hret.error(421, "批次正在运行中", JSONObject.NULL);
         }
 
-        int size = batchDefineService.runBatchInit(batchId);
-        if (1 != size) {
-            logger.info("批次日期大于终止日期,无法运行");
+        RetMsg retMsg = batchDefineService.runBatchInit(batchId);
+        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
+            logger.info(retMsg.toString());
             response.setStatus(426);
-            return Hret.error(426, "批次日期大于终止日期,批次无法运行", null);
+            return Hret.error(retMsg);
         }
 
         groupStatus.afterPropertiesSet(domainId, batchId);

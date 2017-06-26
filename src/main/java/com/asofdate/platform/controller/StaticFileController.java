@@ -1,7 +1,7 @@
 package com.asofdate.platform.controller;
 
-import com.asofdate.platform.model.DomainModel;
-import com.asofdate.platform.model.RoleModel;
+import com.asofdate.platform.entity.DomainEntity;
+import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.DomainService;
 import com.asofdate.platform.service.RoleService;
@@ -80,28 +80,28 @@ public class StaticFileController {
             map.put("domainId", domainId);
             return "hauth/NoAuth";
         }
-        DomainModel domainModel = domainService.getDomainDetails(domainId);
+        DomainEntity domainEntity = domainService.getDomainDetails(domainId);
 
-        map.put("domainId", domainModel.getDomain_id());
-        map.put("domainDesc", domainModel.getDomain_desc());
-        map.put("statusDesc", domainModel.getDomain_status_desc());
-        map.put("createDate", domainModel.getMaintance_date());
-        map.put("createUser", domainModel.getCreate_user_id());
-        map.put("modifyDate", domainModel.getDomain_modify_date());
-        map.put("modifyUser", domainModel.getDomain_modify_user());
+        map.put("domainId", domainEntity.getDomain_id());
+        map.put("domainDesc", domainEntity.getDomain_desc());
+        map.put("statusDesc", domainEntity.getDomain_status_desc());
+        map.put("createDate", domainEntity.getMaintance_date());
+        map.put("createUser", domainEntity.getCreate_user_id());
+        map.put("modifyDate", domainEntity.getDomain_modify_date());
+        map.put("modifyUser", domainEntity.getDomain_modify_user());
         return "hauth/domain_share_info";
     }
 
     @RequestMapping(value = "/v1/auth/role/resource/details", method = RequestMethod.GET)
     public String getResRolePage(HttpServletResponse response, HttpServletRequest request, Map<String, Object> map) {
         String roleId = request.getParameter("role_id");
-        RoleModel roleModel = roleService.getDetails(roleId);
+        RoleEntity roleEntity = roleService.getDetails(roleId);
 
-        map.put("code_number", roleModel.getCode_number());
-        map.put("role_id", roleModel.getRole_id());
-        map.put("role_name", roleModel.getRole_name());
-        map.put("domain_id", roleModel.getDomain_id());
-        map.put("domain_desc", roleModel.getDomain_desc());
+        map.put("code_number", roleEntity.getCode_number());
+        map.put("role_id", roleEntity.getRole_id());
+        map.put("role_name", roleEntity.getRole_name());
+        map.put("domain_id", roleEntity.getDomain_id());
+        map.put("domain_desc", roleEntity.getDomain_desc());
 
         return "hauth/res_role_rel_page";
     }

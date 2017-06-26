@@ -1,7 +1,7 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.UserDao;
-import com.asofdate.platform.model.UserModel;
+import com.asofdate.platform.entity.UserEntity;
 import com.asofdate.platform.service.UserService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,18 +19,18 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public List<UserModel> findAll(String domainid) {
+    public List<UserEntity> findAll(String domainid) {
         return userDao.findAll(domainid);
     }
 
     @Override
-    public List<UserModel> findAll(String domainId, String orgId, String statusCd) {
+    public List<UserEntity> findAll(String domainId, String orgId, String statusCd) {
         return userDao.findAll(domainId, orgId, statusCd);
     }
 
     @Override
-    public int add(UserModel userModel) {
-        return userDao.add(userModel);
+    public int add(UserEntity userEntity) {
+        return userDao.add(userEntity);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int update(UserModel userModel) {
-        return userDao.update(userModel);
+    public int update(UserEntity userEntity) {
+        return userDao.update(userEntity);
     }
 
     @Override

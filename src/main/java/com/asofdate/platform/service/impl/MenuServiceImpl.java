@@ -1,8 +1,8 @@
 package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.MenuDao;
-import com.asofdate.platform.model.MenuModel;
-import com.asofdate.platform.model.ThemeValueModel;
+import com.asofdate.platform.entity.MenuEntity;
+import com.asofdate.platform.entity.ThemeValueEntity;
 import com.asofdate.platform.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ public class MenuServiceImpl implements MenuService {
     private MenuDao menuDao;
 
     @Override
-    public List<MenuModel> findAll() {
+    public List<MenuEntity> findAll() {
         return menuDao.findAll();
     }
 
     @Override
-    public MenuModel getDetails(String resId) {
+    public MenuEntity getDetails(String resId) {
         return menuDao.getDetails(resId);
     }
 
@@ -33,13 +33,13 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ThemeValueModel getThemeDetails(String themeId, String resId) {
+    public ThemeValueEntity getThemeDetails(String themeId, String resId) {
         return menuDao.getThemeDetails(themeId, resId);
     }
 
     @Override
-    public String add(ThemeValueModel themeValueModel) {
-        return menuDao.add(themeValueModel);
+    public String add(ThemeValueEntity themeValueEntity) {
+        return menuDao.add(themeValueEntity);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public String updateTheme(ThemeValueModel themeValueModel) {
-        return menuDao.updateTheme(themeValueModel);
+    public String updateTheme(ThemeValueEntity themeValueEntity) {
+        return menuDao.updateTheme(themeValueEntity);
     }
 }

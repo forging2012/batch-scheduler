@@ -1,9 +1,9 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.TaskDependencyDao;
-import com.asofdate.dispatch.model.BatchGroupModel;
-import com.asofdate.dispatch.model.GroupTaskModel;
-import com.asofdate.dispatch.model.TaskDependencyModel;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
+import com.asofdate.dispatch.entity.TaskDependencyEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.TaskDependencyService;
 import com.asofdate.utils.JoinCode;
@@ -31,20 +31,20 @@ public class TaskDependencyServiceImpl implements TaskDependencyService {
     private Map<String, Set<String>> taskMap;
 
     @Override
-    public List<TaskDependencyModel> findById(String domainId, String batchId) {
+    public List<TaskDependencyEntity> findById(String domainId, String batchId) {
         return taskDependencyDao.findById(domainId, batchId);
     }
 
     public void afterPropertiesSet(String domainId, String batchId) {
         this.taskMap = new HashMap<>();
-        List<BatchGroupModel> groupList = groupService.findByBatchId(domainId, batchId);
-        List<TaskDependencyModel> taskList = findById(domainId, batchId);
+        List<BatchGroupEntity> groupList = groupService.findByBatchId(domainId, batchId);
+        List<TaskDependencyEntity> taskList = findById(domainId, batchId);
 
         /*
         * 初始化任务组中的任务依赖关系
         * */
-        for (BatchGroupModel gt : groupList) {
-            for (TaskDependencyModel m : taskList) {
+        for (BatchGroupEntity gt : groupList) {
+            for (TaskDependencyEntity m : taskList) {
                 String id = JoinCode.join(gt.getUuid(), m.getId());
                 if (this.taskMap.containsKey(id)) {
                     this.taskMap.get(id).add(JoinCode.join(gt.getUuid(), m.getUpId()));
@@ -58,12 +58,12 @@ public class TaskDependencyServiceImpl implements TaskDependencyService {
     }
 
     @Override
-    public List<GroupTaskModel> getTaskDependency(String id) {
+    public List<GroupTaskEntity> getTaskDependency(String id) {
         return taskDependencyDao.getTaskDependency(id);
     }
 
     @Override
-    public List<GroupTaskModel> getGroupTask(String groupId, String id) {
+    public List<GroupTaskEntity> getGroupTask(String groupId, String id) {
         return taskDependencyDao.getGroupTasks(groupId, id);
     }
 

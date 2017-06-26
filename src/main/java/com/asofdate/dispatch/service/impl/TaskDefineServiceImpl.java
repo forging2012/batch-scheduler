@@ -2,8 +2,8 @@ package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.TaskArgumentDao;
 import com.asofdate.dispatch.dao.TaskDefineDao;
-import com.asofdate.dispatch.model.GroupTaskModel;
-import com.asofdate.dispatch.model.TaskDefineModel;
+import com.asofdate.dispatch.entity.GroupTaskEntity;
+import com.asofdate.dispatch.entity.TaskDefineEntity;
 import com.asofdate.dispatch.service.GroupTaskService;
 import com.asofdate.dispatch.service.TaskDefineService;
 import org.json.JSONArray;
@@ -30,12 +30,12 @@ public class TaskDefineServiceImpl implements TaskDefineService {
     private TaskArgumentDao taskArgumentDao;
 
     @Override
-    public List<TaskDefineModel> findAll(String domainId, String batchId) {
-        List<TaskDefineModel> list = dispatchTaskDefineDao.findAll(domainId);
-        List<GroupTaskModel> groupTaskModelList = groupTaskService.findByBatchId(domainId, batchId);
-        Map<String, GroupTaskModel> map = new HashMap<String, GroupTaskModel>();
+    public List<TaskDefineEntity> findAll(String domainId, String batchId) {
+        List<TaskDefineEntity> list = dispatchTaskDefineDao.findAll(domainId);
+        List<GroupTaskEntity> groupTaskEntityList = groupTaskService.findByBatchId(domainId, batchId);
+        Map<String, GroupTaskEntity> map = new HashMap<String, GroupTaskEntity>();
 
-        for (GroupTaskModel m : groupTaskModelList) {
+        for (GroupTaskEntity m : groupTaskEntityList) {
             if (!map.containsKey(m.getTaskId())) {
                 map.put(m.getTaskId(), m);
             }
@@ -52,22 +52,22 @@ public class TaskDefineServiceImpl implements TaskDefineService {
     }
 
     @Override
-    public List<TaskDefineModel> getAll(String domainId) {
+    public List<TaskDefineEntity> getAll(String domainId) {
         return dispatchTaskDefineDao.findAll(domainId);
     }
 
     @Override
-    public int add(TaskDefineModel m) {
+    public int add(TaskDefineEntity m) {
         return dispatchTaskDefineDao.add(m);
     }
 
     @Override
-    public String delete(List<TaskDefineModel> m) {
+    public String delete(List<TaskDefineEntity> m) {
         return dispatchTaskDefineDao.delete(m);
     }
 
     @Override
-    public int update(TaskDefineModel m) {
+    public int update(TaskDefineEntity m) {
         return dispatchTaskDefineDao.update(m);
     }
 
