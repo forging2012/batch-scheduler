@@ -7,6 +7,9 @@ import com.asofdate.dispatch.entity.TaskDependencyEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.TaskDependencyService;
 import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -68,13 +71,29 @@ public class TaskDependencyServiceImpl implements TaskDependencyService {
     }
 
     @Override
-    public int addTaskDependency(JSONArray jsonArray) {
-        return taskDependencyDao.addTaskDependency(jsonArray);
+    public RetMsg addTaskDependency(JSONArray jsonArray) {
+        try {
+            int size = taskDependencyDao.addTaskDependency(jsonArray);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"添加任务失败，请联系管理员",null);
+        }catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int deleteTaskDependency(String uuid) {
-        return taskDependencyDao.deleteTaskDependency(uuid);
+    public RetMsg deleteTaskDependency(String uuid) {
+        try {
+            int size = taskDependencyDao.deleteTaskDependency(uuid);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除任务依赖失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
 

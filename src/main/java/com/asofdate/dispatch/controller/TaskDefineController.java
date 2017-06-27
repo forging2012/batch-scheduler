@@ -5,6 +5,8 @@ import com.asofdate.dispatch.service.TaskDefineService;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.RetMsg;
+import org.aspectj.apache.bcel.generic.RET;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -61,12 +63,12 @@ public class TaskDefineController {
             }
         }
 
-        int size = taskDefineService.add(parse(request));
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(500, "新增任务信息失败,任务组编码重复", JSONObject.NULL);
+        RetMsg retMsg = taskDefineService.add(parse(request));
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     /*
@@ -84,12 +86,12 @@ public class TaskDefineController {
             taskDefineEntity.setDomainId(jsonObject.getString("domainId"));
             args.add(taskDefineEntity);
         }
-        String msg = taskDefineService.delete(args);
-        if ("success".equals(msg)) {
-            return Hret.success(200, "success", JSONObject.NULL);
+        RetMsg msg = taskDefineService.delete(args);
+        if (msg.checkCode()) {
+            return Hret.success(msg);
         }
-        response.setStatus(421);
-        return Hret.error(421, msg, JSONObject.NULL);
+        response.setStatus(msg.getCode());
+        return Hret.error(msg);
     }
 
 
@@ -106,12 +108,12 @@ public class TaskDefineController {
             }
         }
 
-        int size = taskDefineService.update(parse(request));
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(500, "更新任务组信息失败,任务组编码重复", JSONObject.NULL);
+        RetMsg retMsg = taskDefineService.update(parse(request));
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/argument", method = RequestMethod.GET)
@@ -128,25 +130,25 @@ public class TaskDefineController {
         String sortId = request.getParameter("sort_id");
         String uuid = request.getParameter("uuid");
         logger.info("sort is:{},uuid is:{}", sortId, uuid);
-        int size = taskDefineService.updateArgumentSort(sortId, uuid);
+        RetMsg retMsg = taskDefineService.updateArgumentSort(sortId, uuid);
 
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(421, "更新参数序号信息失败", JSONObject.NULL);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/argument/delete", method = RequestMethod.POST)
     @ResponseBody
     public String deleteArg(HttpServletResponse response, HttpServletRequest request) {
         String uuid = request.getParameter("uuid");
-        int size = taskDefineService.deleteArg(uuid);
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(421, "删除参数信息失败", JSONObject.NULL);
+        RetMsg retMsg = taskDefineService.deleteArg(uuid);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/argument/type", method = RequestMethod.GET)
@@ -168,12 +170,12 @@ public class TaskDefineController {
         if (argValue == null || argValue.isEmpty()) {
 
         }
-        int size = taskDefineService.updateArgValue(argValue, uuid);
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(421, "更新任务参数信息值失败,请联系管理员", JSONObject.NULL);
+        RetMsg retMsg = taskDefineService.updateArgValue(argValue, uuid);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
 
@@ -206,12 +208,12 @@ public class TaskDefineController {
 
         jsonObject.put("arg_value", request.getParameter("arg_value"));
 
-        int size = taskDefineService.addArg(jsonObject);
-        if (1 != size) {
-            response.setStatus(421);
-            return Hret.error(421, "新增任务参数失败", JSONObject.NULL);
+        RetMsg retMsg = taskDefineService.addArg(jsonObject);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     private TaskDefineEntity parse(HttpServletRequest request) {

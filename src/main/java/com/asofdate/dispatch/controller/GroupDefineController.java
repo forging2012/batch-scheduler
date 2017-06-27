@@ -129,22 +129,24 @@ public class GroupDefineController {
     @ResponseBody
     public String addGroupTask(HttpServletResponse response, HttpServletRequest request) {
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
-        if (1 != taskDependencyService.addTaskDependency(jsonArray)) {
-            response.setStatus(421);
-            return Hret.error(421, "添加任务依赖失败", JSONObject.NULL);
+        RetMsg retMsg = taskDependencyService.addTaskDependency(jsonArray);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "新增依赖成功", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/group/task/dependency/delete", method = RequestMethod.POST)
     @ResponseBody
     public String deleteTaskDependency(HttpServletResponse response, HttpServletRequest request) {
         String uuid = request.getParameter("uuid");
-        if (1 != taskDependencyService.deleteTaskDependency(uuid)) {
-            response.setStatus(421);
-            return Hret.error(421, "删除任务依赖失败", JSONObject.NULL);
+        RetMsg retMsg = taskDependencyService.deleteTaskDependency(uuid);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/task/argument", method = RequestMethod.GET)
@@ -183,7 +185,7 @@ public class GroupDefineController {
             response.setStatus(retMsg.getCode());
             return Hret.error(retMsg);
         }
-        return Hret.success(retMsg);
+        return Hret.success(200, "success", JSONObject.NULL);
     }
 
     @RequestMapping(value = "/task/list/delete", method = RequestMethod.POST)
