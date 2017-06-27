@@ -1,7 +1,6 @@
 package com.asofdate.dispatch.dao;
 
 import com.asofdate.dispatch.entity.BatchGroupEntity;
-import org.json.JSONArray;
 
 import java.util.List;
 
@@ -13,9 +12,9 @@ public interface BatchGroupDao {
 
     List<BatchGroupEntity> getGroup(String batchId);
 
-    int addGroup(JSONArray jsonArray);
+    int addGroup(List<BatchGroupEntity> list);
 
-    int deleteGroup(JSONArray jsonArray);
+    int deleteGroup(List<BatchGroupEntity> list);
 
     List<BatchGroupEntity> getDependency(String batchid, String id);
 }

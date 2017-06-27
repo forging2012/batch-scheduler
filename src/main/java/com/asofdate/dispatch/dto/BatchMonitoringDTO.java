@@ -5,7 +5,7 @@ package com.asofdate.dispatch.dto;
  */
 public class BatchMonitoringDTO {
     public String as_of_date;
-    public String ratio;
+    public Float ratio;
 
     public String getAsOfDate() {
         return as_of_date;
@@ -15,11 +15,11 @@ public class BatchMonitoringDTO {
         this.as_of_date = as_of_date;
     }
 
-    public String getRatio() {
+    public Float getRatio() {
         return ratio;
     }
 
-    public void setRatio(String ratio) {
+    public void setRatio(Float ratio) {
         this.ratio = ratio;
     }
 

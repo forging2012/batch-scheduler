@@ -2,11 +2,7 @@ package com.asofdate.dispatch.controller;
 
 import com.asofdate.dispatch.dto.BatchArgumentDTO;
 import com.asofdate.dispatch.entity.BatchDefineEntity;
-import com.asofdate.dispatch.entity.BatchGroupEntity;
-import com.asofdate.dispatch.service.ArgumentService;
 import com.asofdate.dispatch.service.BatchDefineService;
-import com.asofdate.dispatch.service.BatchGroupService;
-import com.asofdate.dispatch.service.GroupDependencyService;
 import com.asofdate.dispatch.utils.BatchStatus;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
@@ -34,43 +30,39 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1/dispatch/batch/define")
 public class BatchDefineController {
-
     private static Logger logger = LoggerFactory.getLogger(BatchDefineController.class);
+
     @Autowired
     private BatchDefineService batchDefineService;
-    @Autowired
-    private BatchGroupService batchGroupService;
-    @Autowired
-    private GroupDependencyService groupDependencyService;
-    @Autowired
-    private ArgumentService argumentService;
+
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<BatchDefineEntity> getAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null) {
-            JSONObject jsonObject = JwtService.getConnectUser(request);
-            domainId = jsonObject.getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return batchDefineService.findAll(domainId);
     }
 
-    // 新增任务组
+    /**
+     * 新增批次
+     */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String add(HttpServletResponse response, HttpServletRequest request) {
         RetMsg retMsg = batchDefineService.addBatch(parse(request));
-        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
+        if (!retMsg.checkCode()) {
             response.setStatus(421);
             return Hret.error(retMsg);
         }
         return Hret.success(retMsg);
     }
 
-    /*
-    * 删除任务组
-    * */
+    /**
+     * 删除批次
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public String delete(HttpServletResponse response, HttpServletRequest request) {
@@ -93,7 +85,7 @@ public class BatchDefineController {
         }
 
         RetMsg msg = batchDefineService.deleteBatch(args);
-        if (SysStatus.SUCCESS_CODE == msg.getCode()) {
+        if (msg.checkCode()) {
             return Hret.success(msg);
         }
 
@@ -102,8 +94,9 @@ public class BatchDefineController {
     }
 
     /**
-     * 更新任务组
+     * 更新批次
      *
+     * @param request
      * @return 返回更新操作状态信息
      */
     @RequestMapping(method = RequestMethod.PUT)
@@ -116,19 +109,12 @@ public class BatchDefineController {
         }
         RetMsg retMsg = batchDefineService.updateBatch(m);
 
-        if (retMsg.getCode() != SysStatus.SUCCESS_CODE) {
+        if (!retMsg.checkCode()) {
             logger.info(retMsg.toString());
-            response.setStatus(422);
+            response.setStatus(retMsg.getCode());
             return Hret.error(retMsg);
         }
         return Hret.success(retMsg);
-    }
-
-    @RequestMapping(value = "/group", method = RequestMethod.GET)
-    @ResponseBody
-    public List<BatchGroupEntity> getGroup(HttpServletRequest request) {
-        String batchId = request.getParameter("batch_id");
-        return batchGroupService.getGroup(batchId);
     }
 
     @RequestMapping(value = "/stop", method = RequestMethod.POST)
@@ -143,97 +129,6 @@ public class BatchDefineController {
         return Hret.success(retMsg);
     }
 
-    @RequestMapping(value = "/group", method = RequestMethod.POST)
-    @ResponseBody
-    public String addGroup(HttpServletRequest request) {
-        String batchId = request.getParameter("batch_id");
-        String domainId = request.getParameter("domain_id");
-        String JSON = request.getParameter("JSON");
-        JSONArray jsonArray = new JSONArray(JSON);
-        JSONArray arg = new JSONArray();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            jsonObject.put("domain_id", domainId);
-            jsonObject.put("batch_id", batchId);
-            arg.put(jsonObject);
-        }
-        if (1 != batchGroupService.addGroup(arg)) {
-            return Hret.error(421, "添加任务组失败", JSONObject.NULL);
-        }
-        return Hret.success(200, "success", JSONObject.NULL);
-    }
-
-    @RequestMapping(value = "/group/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteGroup(HttpServletRequest request) {
-        String id = request.getParameter("id");
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
-        jsonArray.put(jsonObject);
-        if (1 != batchGroupService.deleteGroup(jsonArray)) {
-            return Hret.error(421, "删除任务组失败", JSONObject.NULL);
-        }
-        return Hret.success(200, "success", JSONObject.NULL);
-    }
-
-    @RequestMapping(value = "/group/list/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteGroupList(HttpServletResponse response, HttpServletRequest request) {
-        JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
-        try {
-            int size = batchGroupService.deleteGroup(jsonArray);
-            if (1 != size) {
-                response.setStatus(421);
-                return Hret.error(421, "删除任务组失败,任务组已经被当做上级任务依赖引用,请先删除引用关系", JSONObject.NULL);
-            }
-            return Hret.success(200, "success", JSONObject.NULL);
-        } catch (Exception e) {
-            response.setStatus(421);
-            return Hret.error(421, "删除任务组失败,任务组已经被当做上级任务依赖引用,请先删除引用关系", e.getMessage());
-        }
-    }
-
-
-    @RequestMapping(value = "/group/dependency", method = RequestMethod.GET)
-    @ResponseBody
-    public String getDependency(HttpServletRequest request) {
-        String id = request.getParameter("id");
-        return groupDependencyService.getUp(id).toString();
-    }
-
-    @RequestMapping(value = "/group/dependency/add", method = RequestMethod.GET)
-    @ResponseBody
-    public List<BatchGroupEntity> canAddDependency(HttpServletRequest request) {
-        String batchId = request.getParameter("batch_id");
-        String id = request.getParameter("id");
-        return batchGroupService.getDependency(batchId, id);
-    }
-
-    @RequestMapping(value = "/group/dependency", method = RequestMethod.POST)
-    @ResponseBody
-    public String addDependency(HttpServletResponse response, HttpServletRequest request) {
-
-        String JSON = request.getParameter("JSON");
-        JSONArray jsonArray = new JSONArray(JSON);
-
-        if (1 != groupDependencyService.addGroupDependency(jsonArray)) {
-            response.setStatus(421);
-            return Hret.success(421, "新增任务依赖失败", JSONObject.NULL);
-        }
-        return Hret.success(200, "success", JSONObject.NULL);
-    }
-
-    @RequestMapping(value = "/group/dependency/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteGroupDependency(HttpServletResponse response, HttpServletRequest request) {
-        String uuid = request.getParameter("uuid");
-        if (1 != groupDependencyService.deleteGroupDependency(uuid)) {
-            response.setStatus(421);
-            return Hret.error(421, "删除任务组依赖关系失败,请联系管理员", JSONObject.NULL);
-        }
-        return Hret.success(200, "success", JSONObject.NULL);
-    }
 
     @RequestMapping(value = "/argument", method = RequestMethod.GET)
     @ResponseBody
@@ -244,12 +139,30 @@ public class BatchDefineController {
 
     @RequestMapping(value = "/argument", method = RequestMethod.POST)
     @ResponseBody
-    public String addBatchArg(HttpServletRequest request) {
+    public String addBatchArg(HttpServletResponse response, HttpServletRequest request) {
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
-        if (1 != batchDefineService.addBatchArg(jsonArray)) {
-            return Hret.error(421, "添加批次参数失败", JSONObject.NULL);
+        List<BatchArgumentDTO> list = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject js = (JSONObject) jsonArray.get(i);
+            String domainId = js.getString("domain_id");
+            String batchId = js.getString("batch_id");
+            String argId = js.getString("arg_id");
+            String argValue = js.getString("arg_value");
+            BatchArgumentDTO dto = new BatchArgumentDTO();
+            dto.setDomainId(domainId);
+            dto.setBatchId(batchId);
+            dto.setArgId(argId);
+            dto.setArgValue(argValue);
+            list.add(dto);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+
+        RetMsg retMsg = batchDefineService.addBatchArg(list);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
+        }
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/asofdate", method = RequestMethod.PUT)
@@ -257,17 +170,16 @@ public class BatchDefineController {
     public String updateAsofdate(HttpServletResponse response, HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
         String asofdate = request.getParameter("as_of_date");
-        logger.info("batch id is :" + batchId + ",as of date is :" + asofdate);
-        if (1 != batchDefineService.updateAsofdate(asofdate, batchId)) {
+        RetMsg retMsg = batchDefineService.updateAsofdate(asofdate, batchId);
+        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
             response.setStatus(421);
-            return Hret.error(421, "更新批次日期失败", JSONObject.NULL);
+            return Hret.error(retMsg);
         }
-
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     private BatchDefineEntity parse(HttpServletRequest request) {
-        String userId = JwtService.getConnectUser(request).get("UserId").toString();
+        String userId = JwtService.getConnUser(request).getUserId();
         BatchDefineEntity batchDefineEntity = new BatchDefineEntity();
         String batchId = JoinCode.join(request.getParameter("domain_id"), request.getParameter("batch_id"));
         batchDefineEntity.setBatchId(batchId);

@@ -1,12 +1,12 @@
 package com.asofdate.platform.authentication;
 
+import com.asofdate.platform.dto.RequestUserDTO;
 import com.asofdate.platform.entity.UserDetailsEntity;
 import com.asofdate.platform.service.UserDetailsService;
 import com.asofdate.utils.Hret;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,13 +122,11 @@ public class JwtService {
         return null;
     }
 
-    public static JSONObject getConnectUser(HttpServletRequest request) {
-        // 从Header中拿到token
+    public static RequestUserDTO getConnUser(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
         if (token == null) {
             token = getTokenFromCookis(request);
         }
-
         if (token != null) {
             // 解析 Token
             Claims claims = Jwts.parser()
@@ -138,14 +136,12 @@ public class JwtService {
                     .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody();
 
-            JSONObject ret = new JSONObject();
-            ret.put("UserId", claims.get("UserId"));
-            ret.put("DomainId", claims.get("DomainId"));
-            ret.put("OrgUnitId", claims.get("OrgUnitId"));
-
-            return ret;
+            return new RequestUserDTO(
+                    claims.get("DomainId", String.class),
+                    claims.get("UserId", String.class),
+                    claims.get("OrgUnitId", String.class));
         }
-        return null;
+        return new RequestUserDTO();
     }
 
     @PostConstruct

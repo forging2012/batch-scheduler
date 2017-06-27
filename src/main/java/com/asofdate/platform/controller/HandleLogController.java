@@ -23,7 +23,7 @@ public class HandleLogController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAll(HttpServletRequest request) {
-        String domainId = JwtService.getConnectUser(request).getString("DomainId");
+        String domainId = JwtService.getConnUser(request).getDomainID();
         String offset = request.getParameter("offset");
         String limit = request.getParameter("limit");
         List<HandleLogEntity> list = handleLogService.findAll(domainId, Integer.parseInt(offset), Integer.parseInt(limit));

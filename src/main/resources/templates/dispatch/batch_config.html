@@ -89,17 +89,17 @@
                     pbtn.innerHTML = "编辑";
                     pbtn.setAttribute("onclick","BatchSysConfigObj.onclick('"+element.configId+"','"+element.configValue+"','"+domainId+"','"+element.configDesc+"')");
 
-                    pdiv3.append(ph3);
-                    pdiv3.append(pp);
-                    pdiv3.append(pval);
-                    pdiv3.append(pbtn);
+                    pdiv3.appendChild(ph3);
+                    pdiv3.appendChild(pp);
+                    pdiv3.appendChild(pval);
+                    pdiv3.appendChild(pbtn);
 
-                    pdiv2.append(pimg);
-                    pdiv2.append(pdiv3);
+                    pdiv2.appendChild(pimg);
+                    pdiv2.appendChild(pdiv3);
 
-                    pdiv.append(pdiv2);
+                    pdiv.appendChild(pdiv2);
 
-                    document.getElementById("h-dispatch-batch-config-content").append(pdiv);
+                    document.getElementById("h-dispatch-batch-config-content").appendChild(pdiv);
                 })
             })
         },

@@ -8,6 +8,7 @@ import com.asofdate.dispatch.service.TaskDependencyService;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.RetMsg;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by hzwy23 on 2017/6/1.
@@ -41,7 +40,7 @@ public class GroupDefineController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<GroupDefineEntity> getAll(HttpServletRequest request) {
-        String domainID = JwtService.getConnectUser(request).get("DomainId").toString();
+        String domainID = JwtService.getConnUser(request).getDomainID();
         return groupDefineService.findAll(domainID);
     }
 
@@ -50,11 +49,13 @@ public class GroupDefineController {
     * */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String add(HttpServletRequest request) {
-        if (1 != groupDefineService.add(parse(request))) {
-            return Hret.error(500, "新增任务组信息失败,任务组编码重复", JSONObject.NULL);
+    public String add(HttpServletResponse response, HttpServletRequest request) {
+        RetMsg retMsg = groupDefineService.add(parse(request));
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     /*
@@ -62,7 +63,7 @@ public class GroupDefineController {
     * */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public String delete(HttpServletRequest request) {
+    public String delete(HttpServletResponse response, HttpServletRequest request) {
         List<GroupDefineEntity> args = new ArrayList<>();
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -72,11 +73,12 @@ public class GroupDefineController {
             groupDefineEntity.setDomainId(jsonObject.getString("domain_id"));
             args.add(groupDefineEntity);
         }
-        String msg = groupDefineService.delete(args);
-        if ("success".equals(msg)) {
-            return Hret.success(200, "success", JSONObject.NULL);
+        RetMsg msg = groupDefineService.delete(args);
+        if (msg.checkCode()) {
+            return Hret.success(msg);
         }
-        return Hret.error(500, msg, JSONObject.NULL);
+        response.setStatus(msg.getCode());
+        return Hret.error(msg);
     }
 
 
@@ -85,11 +87,13 @@ public class GroupDefineController {
     * */
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
-    public String update(HttpServletRequest request) {
-        if (1 != groupDefineService.update(parse(request))) {
-            return Hret.error(500, "新增任务组信息失败,任务组编码重复", JSONObject.NULL);
+    public String update(HttpServletResponse response, HttpServletRequest request) {
+        RetMsg retMsg = groupDefineService.update(parse(request));
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/task", method = RequestMethod.GET)
@@ -152,16 +156,18 @@ public class GroupDefineController {
 
     @RequestMapping(value = "/task/argument/update", method = RequestMethod.POST)
     @ResponseBody
-    public String updateArgValue(HttpServletRequest request) {
+    public String updateArgValue(HttpServletResponse response, HttpServletRequest request) {
         String argValue = request.getParameter("arg_value");
         String uuid = request.getParameter("uuid");
         String argId = request.getParameter("arg_id");
 
         logger.info("uuid is:" + uuid + ",arg value is:" + argValue);
-        if (1 != groupDefineService.updateArg(argValue, uuid, argId)) {
-            return Hret.error(421, "修改任务组参数失败", JSONObject.NULL);
+        RetMsg retMsg = groupDefineService.updateArg(argValue, uuid, argId);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     /*
@@ -172,35 +178,32 @@ public class GroupDefineController {
     @ResponseBody
     public String deleteTask(HttpServletResponse response, HttpServletRequest request) {
         String id = request.getParameter("id");
-        if (1 != groupTaskService.deleteTask(id)) {
-            response.setStatus(421);
-            return Hret.error(500, "删除任务组中的任务信息失败", JSONObject.NULL);
+        RetMsg retMsg = groupTaskService.deleteTask(id);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     @RequestMapping(value = "/task/list/delete", method = RequestMethod.POST)
     @ResponseBody
     public String deleteTaskList(HttpServletResponse response, HttpServletRequest request) {
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
-        List<String> args = new ArrayList<>();
+        Set<String> args = new HashSet<>();
+
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
             args.add(jsonObject.getString("id"));
-            logger.info("delete job id is :{}", jsonObject.getString("id"));
         }
-        try {
-            int size = groupTaskService.deleteTask(args);
-            if (1 != size) {
-                response.setStatus(421);
-                return Hret.error(421, "删除任务组中的任务信息失败,任务已经被其他任务引用为上级依赖任务,请先删除依赖关系", JSONObject.NULL);
-            }
-            return Hret.success(200, "success", JSONObject.NULL);
-        } catch (Exception e) {
-            logger.info("删除任务组中的任务信息失败,任务已经被其他任务引用为上级依赖任务,请先删除依赖关系");
-            response.setStatus(421);
-            return Hret.error(421, "删除任务组中的任务信息失败,任务已经被其他任务引用为上级依赖任务,请先删除依赖关系", JSONObject.NULL);
+
+        RetMsg retMsg = groupTaskService.deleteTask(args);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
+
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     @RequestMapping(value = "/task/add", method = RequestMethod.POST)
@@ -212,9 +215,9 @@ public class GroupDefineController {
         String arg_list = request.getParameter("arg_list");
         String id = UUID.randomUUID().toString();
 
-        if (1 != groupTaskService.addTask(id, group_id, task_id, domain_id)) {
-            response.setStatus(421);
-            return Hret.error(421, "添加任务失败", JSONObject.NULL);
+        RetMsg retMsg = groupTaskService.addTask(id, group_id, task_id, domain_id);
+        if (!retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
 
         if (!"[]".equals(arg_list)) {
@@ -228,15 +231,17 @@ public class GroupDefineController {
                 jsonObject.put("domain_id", domain_id);
                 arg.put(jsonObject);
             }
-            if (1 != groupTaskService.addGroupArg(arg)) {
-                return Hret.error(421, "任务组添加参数失败", JSONObject.NULL);
+            retMsg = groupTaskService.addGroupArg(arg);
+            if (!retMsg.checkCode()) {
+                response.setStatus(retMsg.getCode());
+                return Hret.error(retMsg);
             }
         }
-        return Hret.success(200, "success", JSONObject.NULL);
+        return Hret.success(retMsg);
     }
 
     private GroupDefineEntity parse(HttpServletRequest request) {
-        String userId = JwtService.getConnectUser(request).get("UserId").toString();
+        String userId = JwtService.getConnUser(request).getUserId();
         GroupDefineEntity groupDefineEntity = new GroupDefineEntity();
         String groupId = JoinCode.join(request.getParameter("domain_id"), request.getParameter("group_id"));
         groupDefineEntity.setGroupId(groupId);

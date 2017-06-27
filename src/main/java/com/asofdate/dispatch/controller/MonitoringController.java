@@ -1,8 +1,8 @@
 package com.asofdate.dispatch.controller;
 
+import com.asofdate.dispatch.dto.BatchMonitoringDTO;
 import com.asofdate.dispatch.service.BatchDefineService;
 import com.asofdate.platform.authentication.JwtService;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +29,15 @@ public class MonitoringController {
     public List getRunning(HttpServletResponse response, HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return batchDefineService.getRunning(domainId);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/radio")
-    public String getBatchCompletedRadio(HttpServletRequest request) {
+    public BatchMonitoringDTO getBatchCompletedRadio(HttpServletRequest request) {
         String batchId = request.getParameter("batch_id");
-        JSONObject ratio = batchDefineService.getBatchCompletedRadio(batchId);
-        return ratio.toString();
+        BatchMonitoringDTO batchMonitoringDTO = batchDefineService.getBatchCompletedRadio(batchId);
+        return batchMonitoringDTO;
     }
 }

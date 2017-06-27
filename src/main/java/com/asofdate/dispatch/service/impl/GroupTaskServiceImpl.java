@@ -7,6 +7,9 @@ import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.entity.GroupTaskEntity;
 import com.asofdate.dispatch.service.BatchGroupService;
 import com.asofdate.dispatch.service.GroupTaskService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by hzwy23 on 2017/5/25.
@@ -110,22 +114,54 @@ public class GroupTaskServiceImpl implements GroupTaskService {
     }
 
     @Override
-    public int deleteTask(String id) {
-        return groupTaskDao.deleteTask(id);
+    public RetMsg deleteTask(String id) {
+        try {
+            int size = groupTaskDao.deleteTask(id);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除任务组中任务失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int addTask(String id, String groupId, String taskId, String domainId) {
-        return groupTaskDao.addTask(id, groupId, taskId, domainId);
+    public RetMsg addTask(String id, String groupId, String taskId, String domainId) {
+        try {
+            int size = groupTaskDao.addTask(id, groupId, taskId, domainId);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"在任务组中添加任务失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int addGroupArg(JSONArray jsonArray) {
-        return groupTaskDao.addArg(jsonArray);
+    public RetMsg addGroupArg(JSONArray jsonArray) {
+        try {
+            int size = groupTaskDao.addArg(jsonArray);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"任务组类型参数设定值失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int deleteTask(List<String> args) {
-        return groupTaskDao.deleteTask(args);
+    public RetMsg deleteTask(Set<String> args) {
+        try {
+            int size = groupTaskDao.deleteTask(args);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除任务组中任务信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 }

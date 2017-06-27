@@ -36,8 +36,7 @@ public class ArgumentController {
     public List<ArgumentDefineEntity> getArgumentDefine(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null) {
-            JSONObject jsonObject = JwtService.getConnectUser(request);
-            domainId = jsonObject.getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         List<ArgumentDefineEntity> list = argumentService.findAll(domainId);
         return list;
@@ -152,7 +151,7 @@ public class ArgumentController {
         argumentDefineEntity.setArgDesc(request.getParameter("arg_desc"));
         argumentDefineEntity.setDomainId(request.getParameter("domain_id"));
         argumentDefineEntity.setBindAsOfDate(request.getParameter("bind_as_of_date"));
-        String userId = JwtService.getConnectUser(request).get("UserId").toString();
+        String userId = JwtService.getConnUser(request).getUserId();
         argumentDefineEntity.setCreateUser(userId);
         argumentDefineEntity.setModifyUser(userId);
         return argumentDefineEntity;

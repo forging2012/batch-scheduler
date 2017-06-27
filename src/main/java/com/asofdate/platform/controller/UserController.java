@@ -32,7 +32,7 @@ public class UserController {
     public List<UserEntity> findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return userService.findAll(domainId);
     }
@@ -133,7 +133,7 @@ public class UserController {
         String domainId = request.getParameter("domainId");
         String userOrgUnitId = request.getParameter("userOrgUnitId");
         String userStatus = request.getParameter("userStatus");
-        String crateUserId = JwtService.getConnectUser(request).getString("UserId");
+        String crateUserId = JwtService.getConnUser(request).getUserId();
 
         userEntity.setUser_id(userId);
         userEntity.setUser_name(userDesc);

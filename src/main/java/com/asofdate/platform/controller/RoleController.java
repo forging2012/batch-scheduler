@@ -41,7 +41,7 @@ public class RoleController {
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public String auth(HttpServletResponse response, HttpServletRequest request) {
-        String modifyUserId = JwtService.getConnectUser(request).getString("UserId");
+        String modifyUserId = JwtService.getConnUser(request).getUserId();
         JSONArray json = new JSONArray(request.getParameter("JSON"));
         try {
             int size = roleService.auth(json, modifyUserId);
@@ -60,7 +60,7 @@ public class RoleController {
 
     @RequestMapping(value = "/auth/batch", method = RequestMethod.POST)
     public String batchAuth(HttpServletResponse response, HttpServletRequest request) {
-        String modifyUserId = JwtService.getConnectUser(request).getString("UserId");
+        String modifyUserId = JwtService.getConnUser(request).getUserId();
         JSONArray json = new JSONArray(request.getParameter("JSON"));
         try {
             int size = roleService.batchAuth(json, modifyUserId);
@@ -97,7 +97,7 @@ public class RoleController {
     public List<RoleEntity> findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return roleService.findAll(domainId);
     }
@@ -144,7 +144,7 @@ public class RoleController {
         roleEntity.setRole_name(request.getParameter("role_name"));
         roleEntity.setRole_status_code(request.getParameter("role_status"));
         roleEntity.setDomain_id(domainId);
-        String userId = JwtService.getConnectUser(request).getString("UserId");
+        String userId = JwtService.getConnUser(request).getUserId();
         roleEntity.setCreate_user(userId);
         roleEntity.setModify_user(userId);
         String roleId = JoinCode.join(domainId, codeNumber);

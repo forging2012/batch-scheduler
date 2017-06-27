@@ -17,6 +17,13 @@ public class RetMsg {
         this.details = details;
     }
 
+    public Boolean checkCode() {
+        if (SysStatus.SUCCESS_CODE == code) {
+            return true;
+        }
+        return false;
+    }
+
     public Integer getCode() {
         return code;
     }

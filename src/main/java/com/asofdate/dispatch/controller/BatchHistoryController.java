@@ -1,8 +1,10 @@
 package com.asofdate.dispatch.controller;
 
+import com.asofdate.dispatch.dto.BatchHistoryDTO;
 import com.asofdate.dispatch.service.BatchHistoryService;
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.utils.Hret;
+import com.asofdate.utils.RetMsg;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +30,7 @@ public class BatchHistoryController {
     public List findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return batchHistoryService.findAll(domainId);
     }
@@ -36,11 +39,20 @@ public class BatchHistoryController {
     public String deleteHistory(HttpServletResponse response, HttpServletRequest request) {
         String JSON = request.getParameter("JSON");
         JSONArray jsonArray = new JSONArray(JSON);
-        int size = batchHistoryService.delete(jsonArray);
-        if (size == 1) {
-            return Hret.success(200, "success", JSONObject.NULL);
+        List<BatchHistoryDTO> list = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject js = (JSONObject) jsonArray.get(i);
+            BatchHistoryDTO dto = new BatchHistoryDTO();
+            dto.setUuid(js.getString("uuid"));
+            list.add(dto);
         }
-        response.setStatus(421);
-        return Hret.error(421, "删除批次历史信息失败", JSONObject.NULL);
+
+        RetMsg retMsg = batchHistoryService.delete(list);
+        if (retMsg.checkCode()){
+            return Hret.success(retMsg);
+        }
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 }

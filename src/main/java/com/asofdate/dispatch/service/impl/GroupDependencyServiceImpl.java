@@ -1,8 +1,12 @@
 package com.asofdate.dispatch.service.impl;
 
 import com.asofdate.dispatch.dao.GroupDependencyDao;
+import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.dispatch.service.GroupDependencyService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -59,17 +63,33 @@ public class GroupDependencyServiceImpl implements GroupDependencyService {
     }
 
     @Override
-    public JSONArray getUp(String id) {
+    public List<BatchGroupEntity> getUp(String id) {
         return groupDependencyDao.getGroupDependency(id);
     }
 
     @Override
-    public int deleteGroupDependency(String uuid) {
-        return groupDependencyDao.deleteGroupDependency(uuid);
+    public RetMsg deleteGroupDependency(String uuid) {
+        try {
+            int size = groupDependencyDao.deleteGroupDependency(uuid);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除任务组依赖关系失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),uuid);
+        }
     }
 
     @Override
-    public int addGroupDependency(JSONArray jsonArray) {
-        return groupDependencyDao.addGroupDependency(jsonArray);
+    public RetMsg addGroupDependency(JSONArray jsonArray) {
+        try {
+            int size = groupDependencyDao.addGroupDependency(jsonArray);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"给任务组添加依赖失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 }

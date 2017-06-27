@@ -1,6 +1,7 @@
 package com.asofdate.utils;
 
 import com.asofdate.platform.authentication.JwtService;
+import com.asofdate.platform.dto.RequestUserDTO;
 import com.asofdate.sql.SqlDefine;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -35,9 +36,9 @@ public class LoggerHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-        JSONObject httpConn = JwtService.getConnectUser(httpServletRequest);
-        String userId = httpConn.getString("UserId");
-        String domainId = httpConn.getString("DomainId");
+        RequestUserDTO httpConn = JwtService.getConnUser(httpServletRequest);
+        String userId = httpConn.getUserId();
+        String domainId = httpConn.getDomainID();
         String clientIp = httpServletRequest.getRemoteAddr();
         Integer statuCd = httpServletResponse.getStatus();
         String method = httpServletRequest.getMethod();

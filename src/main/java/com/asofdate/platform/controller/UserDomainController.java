@@ -2,7 +2,6 @@ package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
 import com.asofdate.platform.service.DomainService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,10 +23,8 @@ public class UserDomainController {
     public String getDomain(HttpServletRequest request) {
 
         // 获取连接用户账号
-        JSONObject authentication = JwtService
-                .getConnectUser(request);
-        Object domainId = authentication.get("DomainId");
+        String domainId = JwtService.getConnUser(request).getDomainID();
 
-        return domainService.findAll(domainId.toString()).toString();
+        return domainService.findAll(domainId).toString();
     }
 }

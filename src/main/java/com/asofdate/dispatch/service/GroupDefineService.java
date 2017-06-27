@@ -1,20 +1,44 @@
 package com.asofdate.dispatch.service;
 
 import com.asofdate.dispatch.entity.GroupDefineEntity;
+import com.asofdate.utils.RetMsg;
 
 import java.util.List;
 
 /**
  * Created by hzwy23 on 2017/6/1.
+ * @author hzwy23
  */
 public interface GroupDefineService {
+    /**
+     * 查询指定你批次中所有任务
+     * @param domainId
+     * */
     List<GroupDefineEntity> findAll(String domainId);
 
-    int update(GroupDefineEntity m);
+    /**
+     * 更新任务组信息
+     * @param vo
+     * */
+    RetMsg update(GroupDefineEntity vo);
 
-    String delete(List<GroupDefineEntity> m);
+    /**
+     * 删除任务组
+     * @param vo
+     * */
+    RetMsg delete(List<GroupDefineEntity> vo);
 
-    int add(GroupDefineEntity m);
+    /**
+     * 新增任务组
+     * @param vo
+     * */
+    RetMsg add(GroupDefineEntity vo);
 
-    int updateArg(String argValue, String uuid, String arg_id);
+    /**
+     * 更新任务组类型参数
+     * @param uuid
+     * @param arg_id
+     * @param argValue
+     * */
+    RetMsg updateArg(String argValue, String uuid, String arg_id);
 }

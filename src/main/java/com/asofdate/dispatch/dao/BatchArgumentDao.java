@@ -1,7 +1,6 @@
 package com.asofdate.dispatch.dao;
 
 import com.asofdate.dispatch.entity.BatchArgumentEntiry;
-import org.json.JSONArray;
 
 import java.util.List;
 
@@ -22,12 +21,12 @@ public interface BatchArgumentDao {
     /**
      * 查询某一个批次所有的批次类型参数信息
      *
-     * @param batchId
+     * @param batchId 批次编码
      * @return 返回某一个批次所有的批次参数类型的值
      */
     List<BatchArgumentEntiry> findBatchArgsById(String batchId);
 
     String getAsOfDate(String batchId);
 
-    int add(JSONArray jsonArray);
+    int add(List<BatchArgumentEntiry> list);
 }

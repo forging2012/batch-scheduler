@@ -31,10 +31,9 @@ public class BatchHistoryDaoImpl implements BatchHistoryDao {
 
     @Transactional
     @Override
-    public int delete(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            String uuid = ((JSONObject) jsonArray.get(i)).getString("uuid");
-            int size = jdbcTemplate.update(SqlDefine.sys_rdbms_194, uuid);
+    public int delete(List<BatchHistoryEntity> list) {
+        for (BatchHistoryEntity m:list) {
+            int size = jdbcTemplate.update(SqlDefine.sys_rdbms_194, m.getUuid());
             if (size != 1) {
                 return -1;
             }

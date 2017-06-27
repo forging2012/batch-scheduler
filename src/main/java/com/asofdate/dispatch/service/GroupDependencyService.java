@@ -1,6 +1,8 @@
 package com.asofdate.dispatch.service;
 
+import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.entity.GroupDependencyEntity;
+import com.asofdate.utils.RetMsg;
 import org.json.JSONArray;
 
 import java.util.List;
@@ -8,17 +10,44 @@ import java.util.Set;
 
 /**
  * Created by hzwy23 on 2017/5/27.
+ * @author hzwy23
  */
 public interface GroupDependencyService {
-    List<GroupDependencyEntity> findById(String domainId, String batchId);
-
+    /**
+     * 使用spring自动注入bean后，调用这个方法初始化对象属性
+     * @param domainId
+     * @param batchId
+     * */
     void afterPropertiesSet(String domainId, String batchId);
 
+    /**
+     * 根据域编码，批次编码查询任务组的依赖关系
+     * @param domainId
+     * @param batchId
+     * */
+    List<GroupDependencyEntity> findById(String domainId, String batchId);
+
+
+    /**
+     * 查询任务组的依赖关系
+     * @param gid 批次中任务组id
+     * */
     Set<GroupDependencyEntity> getGroupDependency(String gid);
 
-    JSONArray getUp(String id);
+    /**
+     * 查询上级依赖任务
+     * @param id
+     * */
+    List<BatchGroupEntity> getUp(String id);
 
-    int deleteGroupDependency(String uuid);
+    /**
+     * 删除任务组依赖
+     * @param uuid 任务组依赖配置中唯一id
+     * */
+    RetMsg deleteGroupDependency(String uuid);
 
-    int addGroupDependency(JSONArray jsonArray);
+    /**
+     * 给任务组新增依赖
+     * */
+    RetMsg addGroupDependency(JSONArray jsonArray);
 }

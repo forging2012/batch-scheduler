@@ -3,6 +3,7 @@ package com.asofdate.dispatch.dao;
 import org.json.JSONArray;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by hzwy23 on 2017/5/24.
@@ -16,7 +17,7 @@ public interface GroupTaskDao {
 
     int deleteTask(String id);
 
-    int deleteTask(List<String> args);
+    int deleteTask(Set<String> args);
 
     int addTask(String id, String groupId, String taskId, String domainId);
 

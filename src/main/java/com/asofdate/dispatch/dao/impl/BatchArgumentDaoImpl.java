@@ -3,8 +3,6 @@ package com.asofdate.dispatch.dao.impl;
 import com.asofdate.dispatch.dao.BatchArgumentDao;
 import com.asofdate.dispatch.entity.BatchArgumentEntiry;
 import com.asofdate.sql.SqlDefine;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,30 +39,6 @@ public class BatchArgumentDaoImpl implements BatchArgumentDao {
     public List<BatchArgumentEntiry> findBatchArgsById(String batchId) {
         RowMapper<BatchArgumentEntiry> rowMapper = new BeanPropertyRowMapper<>(BatchArgumentEntiry.class);
         return jdbcTemplate.query(SqlDefine.sys_rdbms_139, rowMapper, batchId);
-//        JSONArray jsonArray = new JSONArray();
-//        String asOfDate = getAsOfDate(batchId);
-//        jdbcTemplate.query(SqlDefine.sys_rdbms_139, new RowCallbackHandler() {
-//            @Override
-//            public void processRow(ResultSet resultSet) throws SQLException {
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("code_number", resultSet.getString("code_number"));
-//                jsonObject.put("batch_id", resultSet.getString("batch_id"));
-//                jsonObject.put("arg_id", resultSet.getString("arg_id"));
-//                jsonObject.put("domain_id", resultSet.getString("domain_id"));
-//
-//                if ("1".equals(resultSet.getString("bind_as_of_date"))) {
-//                    jsonObject.put("arg_value", asOfDate);
-//                } else {
-//                    jsonObject.put("arg_value", resultSet.getString("arg_value"));
-//                }
-//
-//                jsonObject.put("bind_as_of_date", resultSet.getString("bind_as_of_date"));
-//                jsonObject.put("arg_desc", resultSet.getString("arg_desc"));
-//                jsonArray.put(jsonObject);
-//            }
-//        }, batchId);
-//
-//        return jsonArray;
     }
 
     @Override
@@ -75,21 +49,22 @@ public class BatchArgumentDaoImpl implements BatchArgumentDao {
 
     @Transactional
     @Override
-    public int add(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            if (isExists(jsonObject)) {
-                if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_160, jsonObject.getString("arg_value"),
-                        jsonObject.getString("batch_id"),
-                        jsonObject.getString("arg_id"))) {
+    public int add(List<BatchArgumentEntiry> list) {
+        for (BatchArgumentEntiry m : list) {
+
+            if (isExists(m.getBatchId(), m.getArgId())) {
+                if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_160,
+                        m.getArgValue(),
+                        m.getBatchId(),
+                        m.getArgId())) {
                     return -1;
                 }
             } else {
                 if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_158,
-                        jsonObject.getString("batch_id"),
-                        jsonObject.getString("arg_id"),
-                        jsonObject.getString("arg_value"),
-                        jsonObject.getString("domain_id"))) {
+                        m.getBatchId(),
+                        m.getArgId(),
+                        m.getArgValue(),
+                        m.getDomainId())) {
                     return -1;
                 }
             }
@@ -111,8 +86,8 @@ public class BatchArgumentDaoImpl implements BatchArgumentDao {
         return ret;
     }
 
-    private boolean isExists(JSONObject jsonObject) {
-        int flag = jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_159, Integer.class, jsonObject.getString("batch_id"), jsonObject.getString("arg_id"));
+    private boolean isExists(String batchID, String argId) {
+        int flag = jdbcTemplate.queryForObject(SqlDefine.sys_rdbms_159, Integer.class, batchID, argId);
         if (flag >= 1) {
             return true;
         }

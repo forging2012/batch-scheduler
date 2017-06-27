@@ -1,5 +1,6 @@
 package com.asofdate.dispatch.dao;
 
+import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import org.json.JSONArray;
 
@@ -13,7 +14,7 @@ public interface GroupDependencyDao {
 
     List<GroupDependencyEntity> findById(String domainId, String batchId);
 
-    JSONArray getGroupDependency(String id);
+    List<BatchGroupEntity> getGroupDependency(String id);
 
     int deleteGroupDependency(String uuid);
 

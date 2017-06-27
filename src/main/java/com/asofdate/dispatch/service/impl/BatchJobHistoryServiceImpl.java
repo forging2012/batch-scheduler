@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Created by hzwy23 on 2017/6/17.
+ * @author hzwy23
  */
 @Service
 public class BatchJobHistoryServiceImpl implements BatchJobHistoryService {

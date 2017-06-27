@@ -6,6 +6,8 @@ import com.asofdate.dispatch.service.BatchDefineService;
 import com.asofdate.dispatch.service.GroupStatusService;
 import com.asofdate.dispatch.service.TaskStatusService;
 import com.asofdate.dispatch.utils.BatchStatus;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ public class JobScheduler extends Thread {
     private final String BATCH_ERROR_MSG = "Running error";
     private final String BATCH_STOPPED_MSG = "stopped";
     private final Logger logger = LoggerFactory.getLogger(JobScheduler.class);
+
     @Autowired
     private ArgumentService argumentService;
     // 批次运行对象
@@ -49,20 +52,6 @@ public class JobScheduler extends Thread {
         this.groupStatus = groupStatus;
         this.taskStatus = taskStatus;
         this.batchDefineService = batchDefineService;
-    }
-
-    private void batchPagging() throws Exception {
-        int size = batchDefineService.batchPagging(batchId);
-        if (1 != size) {
-            logger.info("批次已经运行到终止日期,终止运行");
-            return;
-        }
-        groupStatus.afterPropertiesSet(domainId, batchId);
-        taskStatus.afterPropertiesSet(domainId, batchId);
-        argumentService.afterPropertySet(domainId, batchId);
-        quartzConfiguration.createSchedulerFactoryBean(domainId, batchId, taskStatus, argumentService);
-        this.scheduler = quartzConfiguration.getSchedulerFactoryBean();
-        run();
     }
 
     @Override
@@ -140,5 +129,19 @@ public class JobScheduler extends Thread {
             batchDefineService.saveHistory(batchId);
             e.printStackTrace();
         }
+    }
+
+    private void batchPagging() throws Exception {
+        RetMsg retMsg = batchDefineService.batchPagging(batchId);
+        if (SysStatus.SUCCESS_CODE != retMsg.getCode()) {
+            logger.info("批次已经运行到终止日期,终止运行");
+            return;
+        }
+        groupStatus.afterPropertiesSet(domainId, batchId);
+        taskStatus.afterPropertiesSet(domainId, batchId);
+        argumentService.afterPropertySet(domainId, batchId);
+        quartzConfiguration.createSchedulerFactoryBean(domainId, batchId, taskStatus, argumentService);
+        this.scheduler = quartzConfiguration.getSchedulerFactoryBean();
+        run();
     }
 }

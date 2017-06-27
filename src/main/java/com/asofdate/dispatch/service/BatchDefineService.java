@@ -1,10 +1,9 @@
 package com.asofdate.dispatch.service;
 
 import com.asofdate.dispatch.dto.BatchArgumentDTO;
+import com.asofdate.dispatch.dto.BatchMonitoringDTO;
 import com.asofdate.dispatch.entity.BatchDefineEntity;
 import com.asofdate.utils.RetMsg;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ public interface BatchDefineService {
      * 查询批次状态
      *
      * @param batchId
-     * @return 返回批次状态值
+     * @return int 返回批次状态值
      */
     int getStatus(String batchId);
 
@@ -67,30 +66,73 @@ public interface BatchDefineService {
      *
      * @param batchId
      * @param status
-     * @return 返回更新批次状态的操作结果
+     * @return RetMsg 返回更新批次状态的操作结果
      */
     RetMsg setStatus(String batchId, int status);
 
+    /**
+     * 启动批次，初始化批次状态信息
+     *
+     * @param batchId 批次编号
+     * @return RetMsg
+     */
     RetMsg runBatchInit(String batchId);
 
-    int batchPagging(String batchid);
+    /**
+     * 批次翻页，检查批次是否满足翻页条件
+     *
+     * @param batchid 批次编号
+     */
+    RetMsg batchPagging(String batchid);
 
-    int updateAsofdate(String asofdate, String batchId);
+    /**
+     * 更新批次日期
+     *
+     * @param asofdate 批次日期
+     * @param batchId  批次编码
+     * @return RetMsg
+     */
+    RetMsg updateAsofdate(String asofdate, String batchId);
 
     /**
      * 根据批次号，查询批次所拥有的批次类型的参数
      *
      * @param batchId
-     * @return 返回这个批次所拥有的配词类型的参数，如果参数绑定了批次日期，表示参数值与批次日期相等
+     * @return 返回这个批次所拥有的配词类型的参数，
+     * 如果参数绑定了批次日期，表示参数值与批次日期相等
      */
     List<BatchArgumentDTO> findBatchArgsById(String batchId);
 
-    // 根据批次号,向这个批次中,给批次参数赋值
-    int addBatchArg(JSONArray jsonArray);
+    /**
+     * 给批次类型参数赋值
+     *
+     * @param list
+     * @return RetMsg
+     */
+    RetMsg addBatchArg(List<BatchArgumentDTO> list);
 
-    JSONObject getBatchCompletedRadio(String batchId);
+    /**
+     * 查询批次进度
+     *
+     * @param batchId 批次编码
+     * @return BatchMonitoringDTO
+     */
+    BatchMonitoringDTO getBatchCompletedRadio(String batchId);
 
-    int destoryBatch(String batchId, String retMsg, int Status);
+    /**
+     * 销毁批次
+     *
+     * @param batchId 批次编号
+     * @param retMsg  批次销毁时返回信息
+     * @param Status  批次销毁时状态
+     * @return RetMsg
+     */
+    RetMsg destoryBatch(String batchId, String retMsg, int Status);
 
-    int saveHistory(String batchId);
+    /**
+     * 批次运行完成后，保留批次的历史信息
+     *
+     * @param batchId 批次编号
+     */
+    void saveHistory(String batchId);
 }

@@ -11,5 +11,5 @@ import java.util.List;
 public interface BatchHistoryDao {
     List<BatchHistoryEntity> findAll(String domainId);
 
-    int delete(JSONArray jsonArray);
+    int delete(List<BatchHistoryEntity> list);
 }

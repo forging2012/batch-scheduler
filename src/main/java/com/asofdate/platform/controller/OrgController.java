@@ -29,7 +29,7 @@ public class OrgController {
     public List findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).getString("DomainId");
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return orgService.findAll(domainId);
     }
@@ -91,7 +91,7 @@ public class OrgController {
         orgEntity.setUp_org_id(request.getParameter("Up_org_id"));
         String orgUnitId = JoinCode.join(domainId, codeNumber);
         orgEntity.setOrg_id(orgUnitId);
-        String userId = JwtService.getConnectUser(request).getString("UserId");
+        String userId = JwtService.getConnUser(request).getUserId();
         orgEntity.setCreate_user(userId);
         orgEntity.setModify_user(userId);
         return orgEntity;

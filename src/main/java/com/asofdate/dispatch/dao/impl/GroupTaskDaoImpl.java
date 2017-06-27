@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by hzwy23 on 2017/5/24.
@@ -65,7 +66,7 @@ public class GroupTaskDaoImpl implements GroupTaskDao {
 
     @Transactional
     @Override
-    public int deleteTask(List<String> args) {
+    public int deleteTask(Set<String> args) {
         for (String id : args) {
             int size = jdbcTemplate.update(SqlDefine.sys_rdbms_147, id);
             if (size != 1) {

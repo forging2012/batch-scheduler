@@ -4,8 +4,6 @@ import com.asofdate.dispatch.dao.BatchGroupDao;
 import com.asofdate.dispatch.entity.BatchGroupEntity;
 import com.asofdate.dispatch.entity.GroupDependencyEntity;
 import com.asofdate.sql.SqlDefine;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,14 +37,15 @@ public class BatchGroupDaoImpl implements BatchGroupDao {
         return jdbcTemplate.query(SqlDefine.sys_rdbms_137, rowMapper, batchId);
     }
 
+    @Transactional
     @Override
-    public int addGroup(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+    public int addGroup(List<BatchGroupEntity> list) {
+        for (BatchGroupEntity m : list) {
+
             String id = UUID.randomUUID().toString();
-            String batch_id = jsonObject.getString("batch_id");
-            String group_id = jsonObject.getString("group_id");
-            String domain_id = jsonObject.getString("domain_id");
+            String batch_id = m.getBatchId();
+            String group_id = m.getGroupId();
+            String domain_id = m.getDomainId();
 
             if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_154,
                     id, batch_id, group_id, domain_id)) {
@@ -58,10 +57,9 @@ public class BatchGroupDaoImpl implements BatchGroupDao {
 
     @Transactional
     @Override
-    public int deleteGroup(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            String id = jsonObject.getString("id");
+    public int deleteGroup(List<BatchGroupEntity> list) {
+        for (BatchGroupEntity m : list) {
+            String id = m.getId();
             if (1 != jdbcTemplate.update(SqlDefine.sys_rdbms_155, id)) {
                 return -1;
             }

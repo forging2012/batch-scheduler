@@ -2012,6 +2012,12 @@ var Hutils = {
                 cache:false,
                 async:false,
                 dataType:"json",
+                beforeSend:function () {
+
+                },
+                complete:function () {
+
+                },
                 error:function(m) {
                     var msg = JSON.parse(m.responseText);
                     jQuery.Notify({
@@ -2027,7 +2033,9 @@ var Hutils = {
                 success:function(b){
                 }
             };
+
             $.extend(!0,b,a);
+
             "delete"==b.type.toLowerCase()?(
                 b.data._method="DELETE",
                     $.ajax({
@@ -2038,6 +2046,8 @@ var Hutils = {
                         data:b.data,
                         dataType:b.dataType,
                         error:b.error,
+                        beforeSend:b.beforeSend,
+                        complete:b.complete,
                         success:function(a){
                             b.success(a)}
                     })
@@ -2048,6 +2058,8 @@ var Hutils = {
                 async:b.async,
                 data:b.data,
                 dataType:b.dataType,
+                beforeSend:b.beforeSend,
+                complete:b.complete,
                 error:b.error,
                 success: function(da) {
                     b.success(da)
@@ -2336,11 +2348,11 @@ var Hutils = {
                         })
                     } else if (typeof __DEFAULT.callback == "function"){
                         $(getObj(getObj(hmode,"modal-footer"),"cancel","button")).on("click",function(){
-                            console.log("defined callback, cancel")
+                            console.log("defined callback, cancel");
                             $(hmode).remove()
                         })
                         $(getObj(getObj(hmode,"modal-footer"),"submit","button")).on("click",function(){
-                            console.log("defined callback, submit")
+                            console.log("defined callback, submit");
                             __DEFAULT.callback(hmode)
                         })
                     }

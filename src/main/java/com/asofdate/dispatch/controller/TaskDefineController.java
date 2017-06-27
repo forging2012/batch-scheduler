@@ -43,7 +43,7 @@ public class TaskDefineController {
     public List<TaskDefineEntity> getAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
-            domainId = JwtService.getConnectUser(request).get("DomainId").toString();
+            domainId = JwtService.getConnUser(request).getDomainID();
         }
         return taskDefineService.getAll(domainId);
     }
@@ -215,7 +215,7 @@ public class TaskDefineController {
     }
 
     private TaskDefineEntity parse(HttpServletRequest request) {
-        String userId = JwtService.getConnectUser(request).get("UserId").toString();
+        String userId = JwtService.getConnUser(request).getUserId();
         TaskDefineEntity taskDefineEntity = new TaskDefineEntity();
         String taskId = JoinCode.join(request.getParameter("domainId"), request.getParameter("taskId"));
         taskDefineEntity.setTaskId(taskId);

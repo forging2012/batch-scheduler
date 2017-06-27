@@ -107,7 +107,7 @@ public class DomainController {
         domainEntity.setDomain_desc(request.getParameter("domain_desc"));
         domainEntity.setDomain_status_cd(request.getParameter("domain_status_cd"));
         domainEntity.setDomain_status_id(request.getParameter("domain_status_id"));
-        String userId = JwtService.getConnectUser(request).getString("UserId");
+        String userId = JwtService.getConnUser(request).getUserId();
         domainEntity.setDomain_modify_user(userId);
         domainEntity.setCreate_user_id(userId);
         return domainEntity;

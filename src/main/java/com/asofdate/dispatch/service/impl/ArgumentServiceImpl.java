@@ -9,6 +9,7 @@ import com.asofdate.dispatch.service.ArgumentService;
 import com.asofdate.dispatch.service.GroupTaskService;
 import com.asofdate.utils.RetMsg;
 import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -132,12 +133,12 @@ public class ArgumentServiceImpl implements ArgumentService {
     public RetMsg addArgument(ArgumentDefineEntity m) {
         try {
             int size = argumentDefineDao.add(m);
-            if (1 == size){
-                return new RetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE, "success", null);
             }
-            return new RetMsg(SysStatus.ERROR_CODE,"添加参数定义信息失败，请联系管理员",m);
-        } catch (Exception e){
-            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE, "添加参数定义信息失败，请联系管理员", m);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), m);
         }
     }
 
@@ -146,11 +147,11 @@ public class ArgumentServiceImpl implements ArgumentService {
         try {
             String msg = argumentDefineDao.delete(m);
             if ("success".equals(msg)) {
-                return new RetMsg(SysStatus.SUCCESS_CODE,"success",null);
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE, "success", null);
             }
-            return new RetMsg(SysStatus.ERROR_CODE,"删除参数信息失败，请联系管理员",m);
-        } catch (Exception e){
-            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE, "删除参数信息失败，请联系管理员", m);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), m);
         }
     }
 
@@ -158,12 +159,12 @@ public class ArgumentServiceImpl implements ArgumentService {
     public RetMsg updateArgument(ArgumentDefineEntity m) {
         try {
             int size = argumentDefineDao.update(m);
-            if (1 == size){
-                return new RetMsg(SysStatus.SUCCESS_CODE,"success",m);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE, "success", m);
             }
-            return new RetMsg(SysStatus.ERROR_CODE,"更新参数信息失败，请联系管理员",m);
-        } catch (Exception e){
-            return new RetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),m);
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE, "更新参数信息失败，请联系管理员", m);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE, e.getMessage(), m);
         }
 
     }
@@ -266,5 +267,4 @@ public class ArgumentServiceImpl implements ArgumentService {
             }
         }
     }
-
 }

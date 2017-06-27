@@ -120,7 +120,7 @@ public class ShareDomainController {
         shareDomainEntity.setTarget_domain_id(request.getParameter("target_domain_id"));
         shareDomainEntity.setAuthorization_level(request.getParameter("authorization_level"));
         shareDomainEntity.setUuid(request.getParameter("uuid"));
-        String userId = JwtService.getConnectUser(request).getString("UserId");
+        String userId = JwtService.getConnUser(request).getUserId();
         shareDomainEntity.setCreate_user(userId);
         shareDomainEntity.setModify_user(userId);
         return shareDomainEntity;

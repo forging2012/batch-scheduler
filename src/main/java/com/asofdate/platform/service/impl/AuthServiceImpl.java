@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JSONObject domainAuth(HttpServletRequest request, String domainId, String mode) {
-        String userDomainId = JwtService.getConnectUser(request).getString("DomainId");
+        String userDomainId = JwtService.getConnUser(request).getDomainID();
         if (userDomainId.equals(domainId)) {
             return result(true, "success");
         }
