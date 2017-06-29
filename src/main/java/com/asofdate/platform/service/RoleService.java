@@ -1,6 +1,7 @@
 package com.asofdate.platform.service;
 
 import com.asofdate.platform.entity.RoleEntity;
+import com.asofdate.utils.RetMsg;
 import org.json.JSONArray;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public interface RoleService {
 
     int batchAuth(JSONArray jsonArray, String modifyUserId);
 
-    int add(RoleEntity roleEntity);
+    RetMsg add(RoleEntity roleEntity);
 
-    int delete(JSONArray jsonArray);
+    RetMsg delete(List<RoleEntity> list);
 
-    int update(RoleEntity roleEntity);
+    RetMsg update(RoleEntity roleEntity);
 }

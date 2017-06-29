@@ -15,7 +15,7 @@ public interface OrgDao {
 
     int add(OrgEntity orgEntity);
 
-    int delete(JSONArray jsonArray);
+    int delete(List<OrgEntity> list);
 
     int update(OrgEntity orgEntity);
 }

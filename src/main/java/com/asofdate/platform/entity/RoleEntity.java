@@ -103,4 +103,21 @@ public class RoleEntity {
     public void setRole_id(String role_id) {
         this.role_id = role_id;
     }
+
+    @Override
+    public String toString() {
+        return "RoleEntity{" +
+                "code_number='" + code_number + '\'' +
+                ", role_name='" + role_name + '\'' +
+                ", create_user='" + create_user + '\'' +
+                ", create_date='" + create_date + '\'' +
+                ", role_status_desc='" + role_status_desc + '\'' +
+                ", role_status_code='" + role_status_code + '\'' +
+                ", domain_id='" + domain_id + '\'' +
+                ", domain_desc='" + domain_desc + '\'' +
+                ", modify_date='" + modify_date + '\'' +
+                ", modify_user='" + modify_user + '\'' +
+                ", role_id='" + role_id + '\'' +
+                '}';
+    }
 }

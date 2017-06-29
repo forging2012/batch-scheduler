@@ -61,12 +61,9 @@ public class OrgDaoImpl implements OrgDao {
 
     @Transactional
     @Override
-    public int delete(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            jdbcTemplate.update(SqlDefine.sys_rdbms_044,
-                    jsonObject.getString("org_id"),
-                    jsonObject.getString("domain_id"));
+    public int delete(List<OrgEntity> list) {
+        for (OrgEntity m : list) {
+            jdbcTemplate.update(SqlDefine.sys_rdbms_044, m.getOrg_id(), m.getDomain_id());
         }
         return 1;
     }

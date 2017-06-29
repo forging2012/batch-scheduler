@@ -74,8 +74,8 @@ public class StaticFileController {
     public String getDomainSharePage(HttpServletResponse response, HttpServletRequest request, Map<String, Object> map) {
         String domainId = request.getParameter("domain_id");
 
-        JSONObject o = authService.domainAuth(request, domainId, "r");
-        if (!o.getBoolean("status")) {
+        Boolean o = authService.domainAuth(request, domainId, "r").getStatus();
+        if (!o) {
             response.setStatus(423);
             map.put("domainId", domainId);
             return "hauth/NoAuth";

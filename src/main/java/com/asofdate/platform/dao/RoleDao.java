@@ -25,7 +25,7 @@ public interface RoleDao {
 
     int add(RoleEntity roleEntity);
 
-    int delete(JSONArray jsonArray);
+    int delete(List<RoleEntity> list);
 
     int update(RoleEntity roleEntity);
 }

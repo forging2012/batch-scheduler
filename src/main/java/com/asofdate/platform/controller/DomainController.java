@@ -43,7 +43,7 @@ public class DomainController {
         JSONArray jsonArray = new JSONArray(request.getParameter("JSON"));
         for (int i = 0; i < jsonArray.length(); i++) {
             String domain_id = ((JSONObject) jsonArray.get(i)).getString("domain_id");
-            Boolean status = authService.domainAuth(request, domain_id, "w").getBoolean("status");
+            Boolean status = authService.domainAuth(request, domain_id, "w").getStatus();
             if (!status) {
                 response.setStatus(403);
                 return Hret.error(403, "您没有权限删除域[ " + domain_id + " ]", null);
@@ -83,7 +83,7 @@ public class DomainController {
     @ResponseBody
     public String update(HttpServletResponse response, HttpServletRequest request) {
         DomainEntity domainEntity = parse(request);
-        Boolean status = authService.domainAuth(request, domainEntity.getDomain_id(), "w").getBoolean("status");
+        Boolean status = authService.domainAuth(request, domainEntity.getDomain_id(), "w").getStatus();
         if (!status) {
             response.setStatus(403);
             return Hret.error(403, "你没有权限编辑域 [ " + domainEntity.getDomain_desc() + " ]", domainEntity);

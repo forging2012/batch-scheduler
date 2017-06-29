@@ -1,10 +1,14 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
+import com.asofdate.platform.dto.AuthDTO;
 import com.asofdate.platform.entity.RoleEntity;
+import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.RoleService;
-import com.asofdate.utils.Hret;
-import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +31,9 @@ public class RoleController {
     private final Logger logger = LoggerFactory.getLogger(RoleController.class);
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private AuthService authService;
 
     @RequestMapping(value = "/other", method = RequestMethod.GET)
     public List getOther(HttpServletRequest request) {
@@ -94,46 +102,73 @@ public class RoleController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<RoleEntity> findAll(HttpServletRequest request) {
+    public String findAll(HttpServletRequest request) {
         String domainId = request.getParameter("domain_id");
         if (domainId == null || domainId.isEmpty()) {
             domainId = JwtService.getConnUser(request).getDomainID();
         }
-        return roleService.findAll(domainId);
+        AuthDTO authDTO = authService.domainAuth(request,domainId,"r");
+        if (!authDTO.getStatus()){
+            return Hret.error(403,"权限不足，您没有被授权访问这个域",authDTO.getMessage());
+        }
+        return new GsonBuilder().create().toJson(roleService.findAll(domainId));
     }
 
+    /**
+     * 新增角色信息
+     * */
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
         RoleEntity roleEntity = parse(request);
-        int size = roleService.add(roleEntity);
-        if (1 == size) {
-            return Hret.success(200, "success", null);
+        String domainId = roleEntity.getDomain_id();
+        AuthDTO authDTO = authService.domainAuth(request,domainId,"w");
+        if (!authDTO.getStatus()) {
+            return Hret.error(403,"您没有权限在域【"+domainId+"】中新增角色",null);
         }
-        response.setStatus(422);
-        return Hret.error(422, "新增角色信息失败，角色编码重复", null);
+        RetMsg retMsg = roleService.add(roleEntity);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
+        }
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletRequest request, HttpServletResponse response) {
         RoleEntity roleEntity = parse(request);
-        int size = roleService.update(roleEntity);
-        if (1 == size) {
-            return Hret.success(200, "success", null);
+
+        String domainId = roleEntity.getDomain_id();
+        AuthDTO authDTO = authService.domainAuth(request,domainId,"w");
+        if (!authDTO.getStatus()) {
+            return Hret.error(403,"您没有权限在域【"+domainId+"】中更新角色",null);
         }
-        response.setStatus(421);
-        return Hret.error(421, "更新角色信息失败，请联系管理员", null);
+
+        RetMsg retMsg = roleService.update(roleEntity);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
+        }
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(HttpServletResponse response, HttpServletRequest request) {
         String json = request.getParameter("JSON");
-        JSONArray jsonArray = new JSONArray(json);
-        int size = roleService.delete(jsonArray);
-        if (1 == size) {
-            return Hret.success(200, "success", null);
+        List<RoleEntity> list = new GsonBuilder().create().fromJson(json,new TypeToken<List<RoleEntity>>(){}.getType());
+
+        for (RoleEntity m: list) {
+            AuthDTO authDTO = authService.domainAuth(request,m.getDomain_id(),"w");
+            if (!authDTO.getStatus()) {
+                return Hret.error(403,"您没有权限删除域【"+m.getDomain_id()+"】中的角色信息",null);
+            }
         }
-        response.setStatus(421);
-        return Hret.error(421, "删除角色信息失败,角色已经被使用,请先解除引用关系", null);
+
+        RetMsg retMsg = roleService.delete(list);
+        if (!retMsg.checkCode()) {
+            response.setStatus(retMsg.getCode());
+            return Hret.error(retMsg);
+        }
+        return Hret.success(retMsg);
     }
 
     private RoleEntity parse(HttpServletRequest request) {
@@ -149,7 +184,6 @@ public class RoleController {
         roleEntity.setModify_user(userId);
         String roleId = JoinCode.join(domainId, codeNumber);
         roleEntity.setRole_id(roleId);
-
         return roleEntity;
     }
 }

@@ -120,11 +120,10 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public int delete(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            String roleId = jsonObject.getString("role_id");
-            String domainId = jsonObject.getString("domain_id");
+    public int delete(List<RoleEntity> list) {
+        for (RoleEntity m: list) {
+            String roleId = m.getRole_id();
+            String domainId = m.getDomain_id();
             jdbcTemplate.update(SqlDefine.sys_rdbms_027, roleId, domainId);
         }
         return 1;

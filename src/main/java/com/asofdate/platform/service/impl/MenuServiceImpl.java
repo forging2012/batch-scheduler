@@ -4,6 +4,11 @@ import com.asofdate.platform.dao.MenuDao;
 import com.asofdate.platform.entity.MenuEntity;
 import com.asofdate.platform.entity.ThemeValueEntity;
 import com.asofdate.platform.service.MenuService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +19,8 @@ import java.util.List;
  */
 @Service
 public class MenuServiceImpl implements MenuService {
+    private final Logger logger = LoggerFactory.getLogger(MenuServiceImpl.class);
+
     @Autowired
     private MenuDao menuDao;
 
@@ -28,8 +35,17 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public String update(String resId, String resDesc, String resUpId) {
-        return menuDao.update(resId, resDesc, resUpId);
+    public RetMsg update(String resId, String resDesc, String resUpId) {
+        try {
+            String msg = menuDao.update(resId, resDesc, resUpId);
+            if ("success".equals(msg)) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"更新菜单信息失败，请联系管理员",null);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override

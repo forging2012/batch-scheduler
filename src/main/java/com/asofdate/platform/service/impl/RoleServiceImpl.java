@@ -3,7 +3,12 @@ package com.asofdate.platform.service.impl;
 import com.asofdate.platform.dao.RoleDao;
 import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.platform.service.RoleService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +19,7 @@ import java.util.List;
  */
 @Service
 public class RoleServiceImpl implements RoleService {
+    private final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
     @Autowired
     private RoleDao roleDao;
 
@@ -53,17 +59,43 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public int add(RoleEntity roleEntity) {
-        return roleDao.add(roleEntity);
+    public RetMsg add(RoleEntity roleEntity) {
+        try{
+            int size = roleDao.add(roleEntity);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"新增角色信息失败，请联系管理员",null);
+        }catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int delete(JSONArray jsonArray) {
-        return roleDao.delete(jsonArray);
+    public RetMsg delete(List<RoleEntity> list) {
+        try {
+            int size = roleDao.delete(list);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除角色信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int update(RoleEntity roleEntity) {
-        return roleDao.update(roleEntity);
+    public RetMsg update(RoleEntity roleEntity) {
+        try {
+            int size = roleDao.update(roleEntity);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"更新角色信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 }

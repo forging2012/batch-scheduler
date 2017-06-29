@@ -26,11 +26,7 @@ public class HomeMenuController {
         String TypeId = request.getParameter("TypeId");
         String Id = request.getParameter("Id");
 
-        // 获取连接用户账号
-        Authentication authentication = JwtService
-                .getAuthentication((HttpServletRequest) request);
-        String username = authentication.getName();
-
+        String username = JwtService.getConnUser(request).getUserId();
         List<HomeMenuEntity> homeMenusModel = homeMenuService.findAuthedMenus(username, TypeId, Id);
         return homeMenusModel;
     }

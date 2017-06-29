@@ -1,5 +1,6 @@
 package com.asofdate.platform.service;
 
+import com.asofdate.platform.dto.AuthDTO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by hzwy23 on 2017/6/19.
  */
 public interface AuthService {
-    JSONObject domainAuth(HttpServletRequest request, String domainId, String mode);
+    AuthDTO domainAuth(HttpServletRequest request, String domainId, String mode);
 
-    JSONObject basicAuth(HttpServletRequest request);
+    AuthDTO basicAuth(HttpServletRequest request);
 }

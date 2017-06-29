@@ -1,11 +1,17 @@
 package com.asofdate.platform.controller;
 
 import com.asofdate.platform.authentication.JwtService;
+import com.asofdate.platform.dto.AuthDTO;
 import com.asofdate.platform.entity.OrgEntity;
+import com.asofdate.platform.entity.RoleEntity;
+import com.asofdate.platform.service.AuthService;
 import com.asofdate.platform.service.OrgService;
 import com.asofdate.utils.Hret;
 import com.asofdate.utils.JoinCode;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1/auth/org")
 public class OrgController {
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private OrgService orgService;
@@ -44,23 +53,23 @@ public class OrgController {
     @RequestMapping(method = RequestMethod.POST)
     public String add(HttpServletResponse response, HttpServletRequest request) {
         OrgEntity orgEntity = parse(request);
-        int size = orgService.add(orgEntity);
-        if (size == 1) {
-            return Hret.success(200, "success", null);
+        RetMsg retMsg = orgService.add(orgEntity);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
-        response.setStatus(421);
-        return Hret.error(421, "新增机构信息失败，机构编码重复", null);
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     public String update(HttpServletResponse response, HttpServletRequest request) {
         OrgEntity orgEntity = parse(request);
-        int size = orgService.update(orgEntity);
-        if (size == 1) {
-            return Hret.success(200, "success", null);
+        RetMsg retMsg = orgService.update(orgEntity);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
         }
-        response.setStatus(421);
-        return Hret.error(421, "更新机构信息失败，请联系管理员", null);
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
 
@@ -68,17 +77,28 @@ public class OrgController {
     public String delete(HttpServletResponse response, HttpServletRequest request) {
         String JSON = request.getParameter("JSON");
         JSONArray jsonArray = new JSONArray(JSON);
-        try {
-            int size = orgService.delete(jsonArray);
-            if (size == 1) {
-                return Hret.success(200, "success", null);
+        List<OrgEntity> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject js = (JSONObject) jsonArray.get(i);
+            String orgId = js.getString("org_id");
+            String domainId = js.getString("domain_id");
+
+            AuthDTO authDTO = authService.domainAuth(request,domainId,"w");
+            if (!authDTO.getStatus()) {
+                return Hret.error(403,"您没有权限删除域【"+domainId+"】中的机构信息",null);
             }
-            response.setStatus(422);
-            return Hret.error(422, "机构信息不存在，没有机构被删除", null);
-        } catch (Exception e) {
-            response.setStatus(421);
-            return Hret.error(421, "机构已经被引用，请先解除引用关系，再来删除机构", null);
+            OrgEntity entity = new OrgEntity();
+            entity.setOrg_id(orgId);
+            entity.setDomain_id(domainId);
+            list.add(entity);
         }
+
+        RetMsg retMsg = orgService.delete(list);
+        if (retMsg.checkCode()) {
+            return Hret.success(retMsg);
+        }
+        response.setStatus(retMsg.getCode());
+        return Hret.error(retMsg);
     }
 
     private OrgEntity parse(HttpServletRequest request) {

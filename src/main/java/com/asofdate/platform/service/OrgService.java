@@ -1,6 +1,8 @@
 package com.asofdate.platform.service;
 
 import com.asofdate.platform.entity.OrgEntity;
+import com.asofdate.platform.entity.RoleEntity;
+import com.asofdate.utils.RetMsg;
 import org.json.JSONArray;
 
 import java.util.List;
@@ -13,9 +15,9 @@ public interface OrgService {
 
     List<OrgEntity> findSub(String domainId, String orgId);
 
-    int add(OrgEntity orgEntity);
+    RetMsg add(OrgEntity orgEntity);
 
-    int delete(JSONArray jsonArray);
+    RetMsg delete(List<OrgEntity> list);
 
-    int update(OrgEntity orgEntity);
+    RetMsg update(OrgEntity orgEntity);
 }

@@ -42,7 +42,7 @@ public class ShareDomainController {
     public String add(HttpServletResponse response, HttpServletRequest request) {
         ShareDomainEntity arg = parse(request);
         String domainid = arg.getDomain_id();
-        Boolean status = authService.domainAuth(request, domainid, "w").getBoolean("status");
+        Boolean status = authService.domainAuth(request, domainid, "w").getStatus();
         if (!status) {
             response.setStatus(403);
             return Hret.error(403, "您没有权限修改域[" + domainid + "]的授权信息", null);
@@ -67,7 +67,7 @@ public class ShareDomainController {
             return Hret.error(421, "解析参数失败", JSONObject.NULL);
         }
         String domainId = arg.getDomain_id();
-        Boolean status = authService.domainAuth(request, domainId, "w").getBoolean("status");
+        Boolean status = authService.domainAuth(request, domainId, "w").getStatus();
         if (!status) {
             response.setStatus(403);
             return Hret.error(403, "您没有权限修改域[" + domainId + "]的授权信息", null);
@@ -87,7 +87,7 @@ public class ShareDomainController {
         JSONArray args = new JSONArray(request.getParameter("JSON"));
 
         String domainId = request.getParameter("domain_id");
-        Boolean status = authService.domainAuth(request, domainId, "w").getBoolean("status");
+        Boolean status = authService.domainAuth(request, domainId, "w").getStatus();
         if (!status) {
             response.setStatus(403);
             return Hret.error(403, "您没有权限删除域[ " + domainId + " ]的授权信息", null);

@@ -4,6 +4,7 @@ import com.asofdate.platform.entity.MenuEntity;
 import com.asofdate.platform.entity.ThemeValueEntity;
 import com.asofdate.platform.service.MenuService;
 import com.asofdate.utils.Hret;
+import com.asofdate.utils.RetMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,12 +34,12 @@ public class MenuController {
         String resDesc = request.getParameter("res_name");
         String resUpId = request.getParameter("res_up_id");
 
-        String msg = menuService.update(resId, resDesc, resUpId);
-        if ("success".equals(msg)) {
-            return Hret.success(200, "success", null);
+        RetMsg msg = menuService.update(resId, resDesc, resUpId);
+        if (msg.checkCode()) {
+            return Hret.success(msg);
         }
-        response.setStatus(421);
-        return Hret.error(421, msg, null);
+        response.setStatus(msg.getCode());
+        return Hret.error(msg);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -64,13 +65,13 @@ public class MenuController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.GET)
-    public MenuEntity getDetails(HttpServletResponse httpServletResponse, HttpServletRequest request) {
+    public MenuEntity getDetails(HttpServletRequest request) {
         String resId = request.getParameter("res_id");
         return menuService.getDetails(resId);
     }
 
     @RequestMapping(value = "/theme", method = RequestMethod.GET)
-    public ThemeValueEntity getThemeDetails(HttpServletResponse response, HttpServletRequest request) {
+    public ThemeValueEntity getThemeDetails(HttpServletRequest request) {
         String resId = request.getParameter("res_id");
         String themeId = request.getParameter("theme_id");
         return menuService.getThemeDetails(themeId, resId);

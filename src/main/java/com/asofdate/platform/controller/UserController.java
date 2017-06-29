@@ -109,7 +109,7 @@ public class UserController {
 
         String domainId = args.getDomain_id();
 
-        Boolean status = authService.domainAuth(request, domainId, "w").getBoolean("status");
+        Boolean status = authService.domainAuth(request, domainId, "w").getStatus();
         if (!status) {
             return Hret.error(422, "您没有权限在这个域中创建用户", null);
         }

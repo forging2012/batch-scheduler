@@ -2,7 +2,11 @@ package com.asofdate.platform.service.impl;
 
 import com.asofdate.platform.dao.OrgDao;
 import com.asofdate.platform.entity.OrgEntity;
+import com.asofdate.platform.entity.RoleEntity;
 import com.asofdate.platform.service.OrgService;
+import com.asofdate.utils.RetMsg;
+import com.asofdate.utils.SysStatus;
+import com.asofdate.utils.factory.RetMsgFactory;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,17 +32,41 @@ public class OrgServiceImpl implements OrgService {
     }
 
     @Override
-    public int add(OrgEntity orgEntity) {
-        return orgDao.add(orgEntity);
+    public RetMsg add(OrgEntity orgEntity) {
+        try {
+            int size = orgDao.add(orgEntity);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"添加机构信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int delete(JSONArray jsonArray) {
-        return orgDao.delete(jsonArray);
+    public RetMsg delete(List<OrgEntity> list) {
+        try {
+            int size = orgDao.delete(list);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"删除机构信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 
     @Override
-    public int update(OrgEntity orgEntity) {
-        return orgDao.update(orgEntity);
+    public RetMsg update(OrgEntity orgEntity) {
+        try {
+            int size = orgDao.update(orgEntity);
+            if (1 == size) {
+                return RetMsgFactory.getRetMsg(SysStatus.SUCCESS_CODE,"success",null);
+            }
+            return RetMsgFactory.getRetMsg(SysStatus.ERROR_CODE,"更新机构信息失败，请联系管理员",null);
+        } catch (Exception e) {
+            return RetMsgFactory.getRetMsg(SysStatus.EXCEPTION_ERROR_CODE,e.getMessage(),null);
+        }
     }
 }
